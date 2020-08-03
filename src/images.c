@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 #include <stdlib.h>
 
 #include <graphx.h>
@@ -81,7 +84,7 @@ gfx_sprite_t *star_0;
 gfx_sprite_t *easter_egg_0;
 gfx_sprite_t *easter_egg_1;
 gfx_sprite_t *oiram_lives;
-gfx_sprite_t *clock;
+gfx_sprite_t *oiram_clock;
 gfx_sprite_t *one_up;
 gfx_sprite_t *oiram_up_small_0;
 gfx_sprite_t *oiram_up_small_1;
@@ -365,7 +368,7 @@ void extract_sprites(void) {
         spr_ptr += 258;
         oiram_lives = (gfx_sprite_t*)spr_ptr;
         spr_ptr += 93;
-        clock = (gfx_sprite_t*)spr_ptr;
+		oiram_clock = (gfx_sprite_t*)spr_ptr;
         spr_ptr += 83;
         oiram_score_chain_sprites[8] = one_up = (gfx_sprite_t*)spr_ptr;
         spr_ptr += 380;

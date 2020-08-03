@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 #include <stdint.h>
 #include <tice.h>
 #include <debug.h>
@@ -1039,10 +1042,10 @@ uint8_t warp_tile_handler(uint8_t *tile) {
 
 /**
  * Functions rewritten in common.asm for speedz
+   TW - retracted!
  */
 
-/*
-bool moveable_tile(int x, int y) {
+uint8_t moveable_tile(int x, int y) {
     uint8_t *tile;
     testing_side = 2;
 
@@ -1051,24 +1054,120 @@ bool moveable_tile(int x, int y) {
     tile = gfx_TilePtr(&tilemap, test_x = x, test_y = y);
     return (*tile_handler[*tile])(tile);
 }
-*/
 
-/*
 uint8_t solid_tile_handler(uint8_t *tile) {
     return 0;
 }
-*/
 
-/*
 uint8_t empty_tile_handler(uint8_t *tile) {
     return 1;
 }
-*/
 
-/*
 void tile_to_abs_xy_pos(uint8_t *tile, unsigned int *x, unsigned int *y) {
     unsigned int offset = (unsigned int)tile - (unsigned int)tilemap.map;
     *y = (offset / tilemap.width) * TILE_HEIGHT;
     *x = (offset % tilemap.width) * TILE_WIDTH;
 }
-*/
+
+uint8_t moveable_tile_left_bottom(int x, int y) {
+	uint8_t *tile;
+	testing_side = 1;
+
+	if (x < 0) { return false; }
+	if (y < 0) { return true; }
+	tile = gfx_TilePtr(&tilemap, test_x = x, test_y = y);
+	return (*tile_handler[*tile])(tile);
+}
+
+uint8_t moveable_tile_right_bottom(int x, int y) {
+	uint8_t *tile;
+	testing_side = 0;
+
+	if (x < 0) { return false; }
+	if (y < 0) { return true; }
+	tile = gfx_TilePtr(&tilemap, test_x = x, test_y = y);
+	return (*tile_handler[*tile])(tile);
+}
+
+void animate() {
+	tiles.animation_count++;
+
+	if (tiles.animation_count == 4) {
+		goomba_sprite = goomba_0;
+		koopa_red_left_sprite = koopa_red_left_0;
+		koopa_red_right_sprite = koopa_red_right_0;
+		koopa_green_left_sprite = koopa_green_left_0;
+		koopa_green_right_sprite = koopa_green_right_0;
+		koopa_bones_left_sprite = koopa_bones_left_0;
+		koopa_bones_right_sprite = koopa_bones_right_0;
+		fish_left_sprite = fish_left_0;
+		fish_right_sprite = fish_right_0;
+		chomper_sprite = chomper_0;
+		fireball_sprite = fire_0;
+		flame_sprite_up = flame_fire_up_0;
+		flame_sprite_down = flame_fire_down_0;
+		wing_right_sprite = wing_right_0;
+		wing_left_sprite = wing_left_0;
+		spike_left_sprite = spike_left_0;
+		spike_right_sprite = spike_right_0;
+	} else if (tiles.animation_count == 8) {
+		goomba_sprite = goomba_1;
+		koopa_red_left_sprite = koopa_red_left_1;
+		koopa_red_right_sprite = koopa_red_right_1;
+		koopa_green_left_sprite = koopa_green_left_1;
+		koopa_green_right_sprite = koopa_green_right_1;
+		koopa_bones_left_sprite = koopa_bones_left_1;
+		koopa_bones_right_sprite = koopa_bones_right_1;
+		fish_left_sprite = fish_left_1;
+		fish_right_sprite = fish_right_1;
+		chomper_sprite = chomper_1;
+		fireball_sprite = fire_1;
+		flame_sprite_up = flame_fire_up_1;
+		flame_sprite_down = flame_fire_down_1;
+		wing_right_sprite = wing_right_1;
+		wing_left_sprite = wing_left_1;
+		spike_left_sprite = spike_left_1;
+		spike_right_sprite = spike_right_1;
+		tiles.animation_count = 0;
+	} else {
+		return;
+	}
+
+	oiram.index ^= 1;
+
+	int bc = TILE_DATA_SIZE; // 1 byte for width, height, 256 bytes for tile data
+	if (++tiles.animation_4_count == 4) {
+		bc -= TILE_DATA_SIZE * 4;
+		tiles.animation_4_count = 0;
+	}
+	uint8_t** ptr = (uint8_t**) tileset_tiles;
+
+	ptr[0] += bc;
+	ptr[675 / 3] = ptr[0];
+	ptr[678 / 3] = ptr[0];
+	ptr[681 / 3] = ptr[0];
+	ptr[684 / 3] = ptr[0];
+	ptr[687 / 3] = ptr[0];
+	ptr[690 / 3] = ptr[0];
+
+	ptr[12 / 3] += bc;
+	ptr[378 / 3] += bc;
+	ptr[354 / 3] += bc;
+	ptr[366 / 3] += bc;
+	ptr[396 / 3] += bc;
+	ptr[450 / 3] += bc;
+	ptr[438 / 3] += bc;
+	ptr[672 / 3] += bc;
+	ptr[699 / 3] += bc;
+	ptr[702 / 3] += bc;
+
+	bc = TILE_DATA_SIZE; 
+	if (++tiles.animation_3_count == 3) {
+		bc -= TILE_DATA_SIZE * 3;
+		tiles.animation_3_count = 0;
+	}
+
+	ptr[24 / 3] += bc;
+	ptr[324 / 3] += bc;
+	ptr[282 / 3] += bc;
+}

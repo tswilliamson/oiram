@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 #include "defines.h"
 #include "powerups.h"
 #include "loadscreen.h"
@@ -203,7 +206,11 @@ static void extract_images(void) {
     }
 }
 
-void main(void) {
+#if TARGET_WINSIM
+int simmain(void) {
+#else
+int main(void) {
+#endif
     real_t *real_in;
     unsigned int wait;
     size_t pack_author_len;
@@ -294,7 +301,7 @@ HANDLE_DRAW_LEVEL:
     double_rectangle(4, 194, 80, 33);
     gfx_TransparentSprite_NoClip(coin_sprite, 10, 140);
     gfx_TransparentSprite_NoClip(oiram_lives, 10, 164);
-    gfx_TransparentSprite_NoClip(clock, 270, 143);
+    gfx_TransparentSprite_NoClip(oiram_clock, 270, 143);
 
     gfx_Rectangle_NoClip(118, 145, 81, 4);
 
@@ -310,9 +317,12 @@ HANDLE_DRAW_LEVEL:
     delay(400);
 
     // set up the timer
+	int curTicks = RTC_GetTicks();
+	/*
     timer_Control = TIMER1_DISABLE;
     timer_1_ReloadValue = timer_1_Counter = 32768;
     timer_Control = TIMER1_ENABLE | TIMER1_32K | TIMER1_0INT | TIMER1_DOWN;
+	*/
 
     // setup keypad handlers
     if (game.alternate_keypad) {
@@ -349,9 +359,10 @@ HANDLE_DRAW_LEVEL:
         handle_pending_events();
 
         // handle timer every second
-        if (timer_IntStatus & TIMER1_RELOADED) {
+        if (RTC_GetTicks() - curTicks >= 128) {
             handler_timer();
-            timer_IntAcknowledge = TIMER1_RELOADED;
+			curTicks = RTC_GetTicks();
+//            timer_IntAcknowledge = TIMER1_RELOADED;
         }
 
         // blit the draw buffer
@@ -363,7 +374,7 @@ HANDLE_DRAW_LEVEL:
         }
     }
 
-    timer_Control = TIMER1_DISABLE;
+    // timer_Control = TIMER1_DISABLE;
 
     // deallocate
     while(num_simple_enemies) { remove_simple_enemy(0); }
@@ -473,4 +484,6 @@ HANDLE_PACK_FINISH:
 HANDLE_EXIT:
     // save the pack states
     save_progress();
+
+	return 0;
 }

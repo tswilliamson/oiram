@@ -1,4 +1,7 @@
 */*
+!/src/ce_sim
+!/src/scope_timer
+!/proj/*
 !/src
 !/img
 !/extra/*.8xv
@@ -6,3 +9,5 @@
 !iconc.png
 !makefile
 !readme.md
+/proj/WindowsSim
+/proj/*.user

@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{f173ffdc-d20a-4353-9134-18f00b441e65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\scope_timer">
+      <UniqueIdentifier>{fe587b97-6634-4fa8-bcf9-7321d0135ae4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{dae51446-bf7e-447d-9624-2017de07f244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="img">
+      <UniqueIdentifier>{9a269549-21e2-4a4f-839b-8c07e83c6d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ce_sim">
+      <UniqueIdentifier>{ae3a85a3-ada9-46c4-bbf5-8987fd4008cd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\scope_timer\scope_timer.cpp">
+      <Filter>Dependencies\scope_timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\images.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\loadscreen.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\lower.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\oiram.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\powerups.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\simple_mover.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tile_handlers.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\enemies.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\events.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ce_sim\graphx.cpp">
+      <Filter>src\ce_sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ce_sim\fileioc.cpp">
+      <Filter>src\ce_sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ce_sim\tice.cpp">
+      <Filter>src\ce_sim</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\debug.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ce_sim\keypadc.cpp">
+      <Filter>src\ce_sim</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\scope_timer\scope_timer.h">
+      <Filter>Dependencies\scope_timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\images.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\loadscreen.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\lower.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\oiram.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\powerups.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\simple_mover.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tile_handlers.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\defines.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\enemies.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\events.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\platform.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\debug.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ce_sim\graphx.h">
+      <Filter>src\ce_sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ce_sim\ce_sim.h">
+      <Filter>src\ce_sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\scope_timer\tmu.h">
+      <Filter>Dependencies\scope_timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ce_sim\keypadc.h">
+      <Filter>src\ce_sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ce_sim\tice.h">
+      <Filter>src\ce_sim</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ce_sim\fileioc.h">
+      <Filter>src\ce_sim</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Makefile" />
+    <None Include="..\..\..\toolchain\prizm_rules" />
+    <None Include="..\copy.bat" />
+    <None Include="..\src\common.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\README.md" />
+  </ItemGroup>
+</Project>

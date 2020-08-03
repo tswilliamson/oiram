@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 #include "events.h"
 #include "loadscreen.h"
 #include "tile_handlers.h"

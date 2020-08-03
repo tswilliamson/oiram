@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 #include <stdint.h>
 #include <graphx.h>
 

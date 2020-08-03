@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 // standard headers
 #include <stdio.h>
 #include <stdlib.h>

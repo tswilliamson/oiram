@@ -76,7 +76,7 @@ extern gfx_sprite_t *star_0;
 extern gfx_sprite_t *easter_egg_0;
 extern gfx_sprite_t *easter_egg_1;
 extern gfx_sprite_t *oiram_lives;
-extern gfx_sprite_t *clock;
+extern gfx_sprite_t *oiram_clock;
 extern gfx_sprite_t *one_up;
 extern gfx_sprite_t *oiram_up_small_0;
 extern gfx_sprite_t *oiram_up_small_1;

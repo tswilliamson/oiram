@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DeviceDebug|Win32">
+      <Configuration>DeviceDebug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DeviceDebug|x64">
+      <Configuration>DeviceDebug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DeviceRelease|Win32">
+      <Configuration>DeviceRelease</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DeviceRelease|x64">
+      <Configuration>DeviceRelease</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Emulator|Win32">
+      <Configuration>Emulator</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Emulator|x64">
+      <Configuration>Emulator</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WindowsSim|Win32">
+      <Configuration>WindowsSim</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="WindowsSim|x64">
+      <Configuration>WindowsSim</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\ce_sim\graphx.cpp" />
+    <ClCompile Include="..\src\ce_sim\fileioc.cpp" />
+    <ClCompile Include="..\src\ce_sim\keypadc.cpp" />
+    <ClCompile Include="..\src\ce_sim\tice.cpp" />
+    <ClCompile Include="..\src\debug.cpp" />
+    <ClCompile Include="..\src\enemies.c" />
+    <ClCompile Include="..\src\events.c" />
+    <ClCompile Include="..\src\images.c" />
+    <ClCompile Include="..\src\loadscreen.c" />
+    <ClCompile Include="..\src\lower.c" />
+    <ClCompile Include="..\src\main.c" />
+    <ClCompile Include="..\src\oiram.c" />
+    <ClCompile Include="..\src\powerups.c" />
+    <ClCompile Include="..\src\scope_timer\scope_timer.cpp" />
+    <ClCompile Include="..\src\simple_mover.c" />
+    <ClCompile Include="..\src\tile_handlers.c" />
+    <None Include="..\src\common.asm" />
+    <Text Include="..\README.md">
+      <FileType>Document</FileType>
+    </Text>
+    <None Include="..\..\..\toolchain\prizm_rules" />
+    <None Include="..\copy.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\ce_sim\ce_sim.h" />
+    <ClInclude Include="..\src\ce_sim\fileioc.h" />
+    <ClInclude Include="..\src\ce_sim\graphx.h" />
+    <ClInclude Include="..\src\ce_sim\keypadc.h" />
+    <ClInclude Include="..\src\ce_sim\tice.h" />
+    <ClInclude Include="..\src\debug.h" />
+    <ClInclude Include="..\src\defines.h" />
+    <ClInclude Include="..\src\enemies.h" />
+    <ClInclude Include="..\src\events.h" />
+    <ClInclude Include="..\src\images.h" />
+    <ClInclude Include="..\src\loadscreen.h" />
+    <ClInclude Include="..\src\lower.h" />
+    <ClInclude Include="..\src\oiram.h" />
+    <ClInclude Include="..\src\platform.h" />
+    <ClInclude Include="..\src\powerups.h" />
+    <ClInclude Include="..\src\scope_timer\scope_timer.h" />
+    <ClInclude Include="..\src\scope_timer\tmu.h" />
+    <ClInclude Include="..\src\simple_mover.h" />
+    <ClInclude Include="..\src\tile_handlers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Makefile" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0A1E9BF8-05DD-4F73-81D8-18DA73DB5796}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='WindowsSim|x64'">
+    <PlatformToolset>v141</PlatformToolset>
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WindowsSim|Win32'" Label="Configuration">
+    <PlatformToolset>v141</PlatformToolset>
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\include</IncludePath>
+    <NMakeBuildCommandLine>cd..
+make.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=$(Configuration)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd..
+rebuild.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=$(Configuration)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd..
+clean.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZM=1 -DDEBUG=0" CONFIG=$(Configuration)</NMakeCleanCommandLine>
+    <NMakeOutput>$(ProjectDir)\..\$(ProjectName).g3a</NMakeOutput>
+    <NMakeIncludeSearchPath>$(ProjectDir)\..\..\include</NMakeIncludeSearchPath>
+    <NMakePreprocessorDefinitions>TARGET_PRIZM=1;DEBUG=0</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\include</IncludePath>
+    <NMakeBuildCommandLine>cd..
+make.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZM -DDEBUG=0" CONFIG=$(Configuration)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd..
+rebuild.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZM -DDEBUG=0" CONFIG=$(Configuration)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd..
+clean.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZM -DDEBUG=0" CONFIG=$(Configuration)</NMakeCleanCommandLine>
+    <NMakeOutput>$(ProjectDir)\..\$(ProjectName).g3a</NMakeOutput>
+    <NMakeIncludeSearchPath>$(ProjectDir)\..\..\include</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\include</IncludePath>
+    <NMakeBuildCommandLine>cd..
+make.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZM=1 -DDEBUG=1" CONFIG=$(Configuration)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd..
+rebuild.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZM=1 -DDEBUG=1" CONFIG=$(Configuration)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd..
+clean.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZM=1 -DDEBUG=1" CONFIG=$(Configuration)</NMakeCleanCommandLine>
+    <NMakeOutput>$(ProjectDir)\..\$(ProjectName).g3a</NMakeOutput>
+    <NMakeIncludeSearchPath>$(ProjectDir)\..\..\include</NMakeIncludeSearchPath>
+    <NMakePreprocessorDefinitions>TARGET_PRIZM=1;DEBUG=1</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\include</IncludePath>
+    <NMakeBuildCommandLine>cd..
+make.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZM -DDEBUG=1" CONFIG=$(Configuration)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd..
+rebuild.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZM -DDEBUG=1" CONFIG=$(Configuration)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd..
+clean.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZM -DDEBUG=1" CONFIG=$(Configuration)</NMakeCleanCommandLine>
+    <NMakeOutput>$(ProjectDir)\..\$(ProjectName).g3a</NMakeOutput>
+    <NMakeIncludeSearchPath>$(ProjectDir)\..\..\include</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\include</IncludePath>
+    <NMakeBuildCommandLine>cd..
+make.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZMEMU=1 -DDEBUG=1" CONFIG=$(Configuration)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd..
+rebuild.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZMEMU=1 -DDEBUG=1" CONFIG=$(Configuration)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd..
+clean.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET_PRIZMEMU=1 -DDEBUG=1" CONFIG=$(Configuration)</NMakeCleanCommandLine>
+    <NMakeOutput>$(ProjectDir)\..\$(ProjectName).g3a</NMakeOutput>
+    <NMakeIncludeSearchPath>$(ProjectDir)\..\..\include</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);..\..\..\include</IncludePath>
+    <NMakeBuildCommandLine>cd..
+make.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZMEMU -DDEBUG=1" CONFIG=$(Configuration)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>cd..
+rebuild.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZMEMU -DDEBUG=1" CONFIG=$(Configuration)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>cd..
+clean.bat FXCGSDK=$(ProjectDir)/../../../ DEFINES="-DTARGET=PRIZMEMU -DDEBUG=1" CONFIG=$(Configuration)</NMakeCleanCommandLine>
+    <NMakeOutput>$(ProjectDir)\..\$(ProjectName).g3a</NMakeOutput>
+    <NMakeIncludeSearchPath>$(ProjectDir)\..\..\include</NMakeIncludeSearchPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='WindowsSim|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DeviceRelease|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DeviceDebug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emulator|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WindowsSim|x64'">
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\winsim\freeglut\lib\x64</AdditionalLibraryDirectories>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>TARGET_WINSIM=1;DEBUG=1</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\src\;..\src\ce_sim\</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='WindowsSim|Win32'">
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\..\utils\winsim\freeglut\lib;$(ProjectDir)\..\..\..\utils\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;winsim.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>TARGET_WINSIM=1;DEBUG=1</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>..\src\;..\..\..\utils;..\..\..\utils\winsim;..\src\ce_sim</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <PostBuildEvent>
+      <Command>copy /Y "$(SolutionDir)..\..\..\utils\winsim\freeglut\bin\*.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying FreeGLUT dll</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 #include "loadscreen.h"
 #include "tile_handlers.h"
 #include "defines.h"
@@ -44,6 +47,9 @@ uint8_t *get_pack_pointer(ti_var_t slot) {
 
 // this routine should only be used right before an exit
 void save_progress(void) {
+	// todo
+	DebugAssert(false);
+	/*
     ti_var_t variable;
     ti_CloseAll();
     if ((variable = ti_Open(save_name, "w"))) {
@@ -53,6 +59,7 @@ void save_progress(void) {
         ti_SetArchiveStatus(true, variable);
     }
     ti_CloseAll();
+	*/
     gfx_End();
 }
 
@@ -377,7 +384,7 @@ void set_load_screen(void) {
 
     for (;;) {
         kb_key_t grp7;
-        kb_key_t grp1;
+        kb_key_t _grp1;
         kb_key_t grp6;
 
         // scan the keypad
@@ -388,16 +395,16 @@ void set_load_screen(void) {
 
         grp7 = kb_Data[7];
         grp6 = kb_Data[6];
-        grp1 = kb_Data[1];
+		_grp1 = kb_Data[1];
 
-        if (grp1 == kb_Del) {
+        if (_grp1 == kb_Del) {
             save_progress();
             exit(0);
         }
-        if (grp6 == kb_Enter || grp1 == kb_2nd) {
+        if (grp6 == kb_Enter || _grp1 == kb_2nd) {
             break;
         }
-        if (grp1 == kb_Mode) {
+        if (_grp1 == kb_Mode) {
             game.alternate_keypad = !game.alternate_keypad;
             goto redraw_screen;
         }

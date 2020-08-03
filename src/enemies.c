@@ -1,3 +1,6 @@
+#include "platform.h"
+#include "debug.h"
+
 #include "enemies.h"
 #include "simple_mover.h"
 #include "tile_handlers.h"
