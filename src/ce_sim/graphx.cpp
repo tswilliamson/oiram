@@ -61,6 +61,39 @@ struct GraphX_Context {
 	}
 };
 
+struct ClipChecker {
+	uint16_t hashTop;
+	uint16_t hashBottom;
+
+	uint16_t Hash(uint16_t* row) {
+		uint16_t val = 0x1E37;
+		for (int x = 0; x < LCD_WIDTH_PX; x++) {
+			val = (val << 1) ^ (row[x]) ^ (val >> 15);
+		}
+		return val;
+	}
+
+	uint16_t HashTop() {
+		return Hash(((uint16_t*)GetVRAMAddress()) - LCD_WIDTH_PX);
+	}
+
+	uint16_t HashBottom() {
+		return Hash(((uint16_t*)GetVRAMAddress()) + LCD_WIDTH_PX * LCD_HEIGHT_PX);
+	}
+
+	ClipChecker() {
+		hashTop = HashTop();
+		hashBottom = HashBottom();
+	}
+
+	~ClipChecker() {
+		DebugAssert(hashTop == HashTop());
+		DebugAssert(hashBottom == HashBottom());
+	}
+};
+
+#define CheckClip() ClipChecker _checker;
+
 static GraphX_Context GFX;
 const int ScreenOffset = (LCD_WIDTH_PX - gfx_lcdWidth) / 2;
 
@@ -70,6 +103,8 @@ uint16_t* GetTargetAddr(int x, int y) {
 
 template<bool bClip, bool bTransparent>
 void RenderSprite(gfx_sprite_t *sprite, int x, int y) {
+	CheckClip();
+
 	if (!sprite)
 		return;
 
@@ -120,7 +155,9 @@ void gfx_ScaledTransparentSprite_NoClip(gfx_sprite_t *sprite,
 	uint8_t y,
 	uint8_t width_scale,
 	uint8_t height_scale) {
-	
+
+	CheckClip();
+
 	uint8_t* spriteData = sprite->data;
 	uint16_t* targetLine = GetTargetAddr(x, y);
 	const unsigned int pitch = LCD_WIDTH_PX * height_scale;
@@ -166,6 +203,8 @@ gfx_sprite_t *gfx_FlipSpriteY(gfx_sprite_t *sprite_in,
 void gfx_RLETSprite(gfx_rletsprite_t *sprite,
 	int x,
 	int y) {
+	CheckClip();
+
 	// todo
 }
 
@@ -232,6 +271,8 @@ void gfx_Rectangle(int x,
 	int width,
 	int height) {
 
+	CheckClip();
+
 	GFX.ClipRect(x, y, width, height);
 
 	gfx_Rectangle_NoClip(x, y, width, height);
@@ -242,6 +283,8 @@ void gfx_Rectangle_NoClip(uint24_t x,
 	uint8_t y,
 	uint24_t width,
 	uint8_t height) {
+
+	CheckClip();
 
 	uint16_t* targetLine = GetTargetAddr(x, y);
 
@@ -279,6 +322,8 @@ void gfx_FillRectangle_NoClip(uint24_t x,
 	uint24_t width,
 	uint8_t height) {
 
+	CheckClip();
+
 	uint16_t* targetLine = GetTargetAddr(x, y);
 	for (int y0 = 0; y0 < height; y0++) {
 		for (int x0 = 0; x0 < width; x0++) {
@@ -289,6 +334,8 @@ void gfx_FillRectangle_NoClip(uint24_t x,
 }
 
 void gfx_SetPixel(uint24_t x, uint8_t y) {
+	CheckClip();
+
 	uint16_t* targetLine = GetTargetAddr(x, y);
 	targetLine[0] = GFX.CurColor;
 }
@@ -321,6 +368,8 @@ void gfx_BlitLines(gfx_location_t src,
 void gfx_FillCircle(int x,
 	int y,
 	uint24_t radius) {
+
+	CheckClip();
 
 	int width = radius * 2;
 	int height = radius * 2;
@@ -382,6 +431,11 @@ void gfx_SetTextXY(int x, int y) {
 }
 
 void gfx_PrintStringXY(const char *string, int x, int y) {
+	CheckClip();
+
+	if (y + arial_small.height >= LCD_HEIGHT_PX)
+		return;
+
 	CalcType_Draw(&arial_small, string, x + ScreenOffset, y, GFX.CurTextColor, 0, 0);
 }
 

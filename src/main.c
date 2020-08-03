@@ -163,6 +163,9 @@ void black_circles(void) {
 }
 
 void double_rectangle(uint24_t x, uint8_t y, uint24_t width, uint8_t height) {
+	// todo : remove this, just to prevent memory corruption right now
+	if (y + height >= 216) return;
+
     uint24_t xw = x + width;
     uint8_t yh = y + height;
 
