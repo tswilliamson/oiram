@@ -8,7 +8,10 @@
 #ifndef H_KEYPADC
 #define H_KEYPADC
 
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
+
 #include <stdbool.h>
 
 #ifdef __cplusplus

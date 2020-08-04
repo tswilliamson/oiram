@@ -1,11 +1,13 @@
 #include "platform.h"
 #include "debug.h"
 
+#if !TARGET_PRIZM
 #include <stdint.h>
-#include <tice.h>
-#include <debug.h>
+#endif
+#include "tice.h"
+#include "debug.h"
 #include <stdio.h>
-#include <graphx.h>
+#include "graphx.h"
 
 #include "defines.h"
 #include "powerups.h"
@@ -952,6 +954,7 @@ uint8_t warp_tile_handler(uint8_t *tile) {
 
     for(i = 0; i < warp_num; i += 2) {
         unsigned int warp_enter = warp_info[i];
+		EndianSwap32_Little(warp_enter);
         unsigned int warp_enter_masked = warp_enter & ~MASK_PIPE_DOOR;
 
         if (offset == warp_enter_masked) {
@@ -1008,6 +1011,8 @@ uint8_t warp_tile_handler(uint8_t *tile) {
 
         if (warp.enter) {
             unsigned int not_masked = warp_info[i+1];
+			EndianSwap32_Little(not_masked);
+
             warp.exit_loc = not_masked & ~MASK_PIPE_DOOR;
 
             if (not_masked & MASK_PIPE_UP) {

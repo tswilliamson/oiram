@@ -15,11 +15,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 
-#include <graphx.h>
-#include <keypadc.h>
-#include <fileioc.h>
+#if !TARGET_PRIZM
+#include <stdint.h>
+#endif
+
+#include "graphx.h"
+#include "keypadc.h"
+#include "fileioc.h"
 
 bool something_died = false;
 

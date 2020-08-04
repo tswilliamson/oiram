@@ -2,7 +2,10 @@
 #define POWERUPS_H
 
 #include <stdbool.h>
+
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
 
 void add_mushroom_1up(uint8_t*);
 

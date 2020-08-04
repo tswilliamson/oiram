@@ -1,8 +1,12 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#include <graphx.h>
+#include "graphx.h"
+
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
+
 #include <stdlib.h>
 
 void interrupt isr_keyboard_alternate(void);
@@ -69,7 +73,7 @@ enum autoscroll {
 typedef struct {
     bool enter;
     bool exit;
-    bool count;
+    uint8_t count;
     int clip_x;
     int clip_y;
     uint8_t style;

@@ -12,3 +12,5 @@
 /proj/WindowsSim
 /proj/*.user
 /proj/.vs/oiram/v15
+/proj/x64/DeviceDebug/*.log
+/proj/x64/DeviceDebug

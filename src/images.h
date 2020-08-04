@@ -1,7 +1,7 @@
 #ifndef IMAGES_H
 #define IMAGES_H
 
-#include <graphx.h>
+#include "graphx.h"
 
 extern gfx_sprite_t *tileset_tiles[256];
 

@@ -61,6 +61,7 @@ struct GraphX_Context {
 	}
 };
 
+#if TARGET_WINSIM
 struct ClipChecker {
 	uint16_t hashTop;
 	uint16_t hashBottom;
@@ -93,6 +94,9 @@ struct ClipChecker {
 };
 
 #define CheckClip() ClipChecker _checker;
+#else
+#define CheckClip()
+#endif
 
 static GraphX_Context GFX;
 const int ScreenOffset = (LCD_WIDTH_PX - gfx_lcdWidth) / 2;
@@ -216,7 +220,7 @@ void gfx_SetPalette(void *palette,
 	uint16_t* srcColor = (uint16_t*) palette;
 	uint16_t* dstColor = &GFX.Palette[offset / 2];
 	size /= 2;
-	for (int32 i = 0; i < size; i++, dstColor++, srcColor++) {
+	for (uint32 i = 0; i < size; i++, dstColor++, srcColor++) {
 		dstColor[0] =
 			((srcColor[0] & 0b0111110000000000) << 1) |
 			((srcColor[0] & 0b0000001111100000) << 1) |
@@ -289,19 +293,19 @@ void gfx_Rectangle_NoClip(uint24_t x,
 	uint16_t* targetLine = GetTargetAddr(x, y);
 
 	uint16_t* bufferLine = targetLine;
-	for (int x0 = 0; x0 < width; x0++) {
+	for (uint32 x0 = 0; x0 < width; x0++) {
 		*(bufferLine++) = GFX.CurColor;
 	}
 	targetLine += LCD_WIDTH_PX;
 
-	for (int y0 = 1; y0 + 1 < height; y0++) {
+	for (uint32 y0 = 1; y0 + 1 < height; y0++) {
 		targetLine[0] = GFX.CurColor;
 		targetLine[width - 1] = GFX.CurColor;
 		targetLine += LCD_WIDTH_PX;
 	}
 
 	bufferLine = targetLine;
-	for (int x0 = 0; x0 < width; x0++) {
+	for (uint32 x0 = 0; x0 < width; x0++) {
 		*(bufferLine++) = GFX.CurColor;
 	}
 }
@@ -325,8 +329,8 @@ void gfx_FillRectangle_NoClip(uint24_t x,
 	CheckClip();
 
 	uint16_t* targetLine = GetTargetAddr(x, y);
-	for (int y0 = 0; y0 < height; y0++) {
-		for (int x0 = 0; x0 < width; x0++) {
+	for (uint32 y0 = 0; y0 < height; y0++) {
+		for (uint32 x0 = 0; x0 < width; x0++) {
 			targetLine[x0] = GFX.CurColor;
 		}
 		targetLine += LCD_WIDTH_PX;
@@ -486,10 +490,10 @@ void gfx_Tilemap(gfx_tilemap_t *tilemap,
 	}
 
 	int curY = baseY;
-	for (int dY = 0; dY < numRows; dY++, curY += tilemap->tile_height, tileY++) {
+	for (uint32 dY = 0; dY < numRows; dY++, curY += tilemap->tile_height, tileY++) {
 		int curX = baseX;
 		tileX = baseTileX;
-		for (int dX = 0; dX < numCols; dX++, curX += tilemap->tile_width, tileX++) {
+		for (uint32 dX = 0; dX < numCols; dX++, curX += tilemap->tile_width, tileX++) {
 			gfx_sprite_t* sprite = tilemap->tiles[tilemap->map[tileX + tileY * tilemap->width]];
 			gfx_Sprite(sprite, curX, curY);
 		}

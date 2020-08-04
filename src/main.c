@@ -13,12 +13,15 @@
 #include "tile_handlers.h"
 
 #include <stdbool.h>
-#include <stdint.h>
 
-#include <tice.h>
-#include <graphx.h>
-#include <keypadc.h>
-#include <fileioc.h>
+#if !TARGET_PRIZM
+#include <stdint.h>
+#endif
+
+#include "tice.h"
+#include "graphx.h"
+#include "keypadc.h"
+#include "fileioc.h"
 
 map_t level_map;
 tiles_struct_t tiles;

@@ -41,7 +41,10 @@
 #ifndef H_GRAPHX
 #define H_GRAPHX
 
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
+
 #include <stdlib.h>
 #include <stdbool.h>
 

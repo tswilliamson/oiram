@@ -9,7 +9,9 @@
 #define H_TICE
 
 #include <stdbool.h>
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
 #include <stddef.h>
 
 #ifdef __cplusplus

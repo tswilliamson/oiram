@@ -41,7 +41,7 @@ struct tifile {
 		data.type = TI_APPVAR_TYPE;
 	}
 
-	void EndianSwap() {
+	void DoEndianSwap() {
 		EndianSwap_Little(file_length);
 		EndianSwap_Little(data.header_length);
 		EndianSwap_Little(data.data_length);
@@ -54,28 +54,24 @@ struct tifile {
 
 struct CEFileSlot {
 	tifile file;
+	char path[32];
 	uint8_t* data;
 	uint32 pos;
 
 	CEFileSlot() : data(nullptr) {}
 
 	void Close() {
-		if (data) {
-			//free(data);
-			data = nullptr;
-		}
 	}
 };
 
 const int NumSlots = 64;
 
 static bool bAnyOpen = false;
-static int curSlot = 0;
 static CEFileSlot AllFiles[NumSlots];
 
-static int FindSlot() {
+static int FindSlot(const char* forPath) {
 	for (int i = 0; i < NumSlots; i++) {
-		if (AllFiles[i].data == nullptr) {
+		if (strcmp(AllFiles[i].path, forPath) == 0 || AllFiles[i].data == nullptr) {
 			return i;
 		}
 	}
@@ -123,17 +119,24 @@ static int OpenVar(const char* name, int mode, bool bHasExtension = false) {
  * @note If there isn't enough memory to create the variable, or a slot isn't open, zero (0) is returned
  */
 ti_var_t ti_Open(const char *name, const char *mode) {
-	int slot = FindSlot();
+	int slot = FindSlot(name);
 	if (slot == -1)
 		return 0;
 
 	if (!strcmp(mode, "r")) {
+		// data already read
+		if (AllFiles[slot].data) {
+			return slot + 1;
+		}
+
 		int handle = OpenVar(name, READ);
 		if (handle >= 0) {
 			if (Bfile_ReadFile_OS(handle, &AllFiles[slot].file, sizeof(tifile), -1) != sizeof(tifile)) {
 				Bfile_CloseFile_OS(handle);
 				return 0;
 			}
+
+			AllFiles[slot].file.DoEndianSwap();
 
 			const int var_length = AllFiles[slot].file.data.var_length;
 			AllFiles[slot].data = (uint8_t*) malloc(var_length);
@@ -142,6 +145,8 @@ ti_var_t ti_Open(const char *name, const char *mode) {
 				AllFiles[slot].Close();
 				return 0;
 			}
+
+			strcpy(AllFiles[slot].path, name);
 
 			AllFiles[slot].pos = 0;
 			bAnyOpen = true;

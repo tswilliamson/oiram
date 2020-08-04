@@ -1,9 +1,12 @@
 #ifndef ENEMIES_H
 #define ENEMIES_H
 
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
+
 #include <stdbool.h>
-#include <graphx.h>
+#include "graphx.h"
 
 void get_enemies(void);
 

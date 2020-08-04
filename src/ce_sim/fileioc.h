@@ -7,12 +7,17 @@
 #ifndef H_FILEIOC
 #define H_FILEIOC
 
+#include "ce_sim.h"
+
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <tice.h>
+#include "tice.h"
 
 #ifdef __cplusplus
 extern "C" {

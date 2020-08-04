@@ -2,12 +2,14 @@
 #include "debug.h"
 
 #include <stdbool.h>
+#if !TARGET_PRIZM
 #include <stdint.h>
-#include <tice.h>
+#endif
+#include "tice.h"
 
-#include <graphx.h>
-#include <keypadc.h>
-#include <fileioc.h>
+#include "graphx.h"
+#include "keypadc.h"
+#include "fileioc.h"
 
 #include "tile_handlers.h"
 #include "powerups.h"

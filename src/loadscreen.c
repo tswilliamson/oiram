@@ -14,12 +14,15 @@
 
 #include <string.h>
 #include <stdbool.h>
-#include <stdint.h>
 
-#include <tice.h>
-#include <graphx.h>
-#include <keypadc.h>
-#include <fileioc.h>
+#if !TARGET_PRIZM
+#include <stdint.h>
+#endif
+
+#include "tice.h"
+#include "graphx.h"
+#include "keypadc.h"
+#include "fileioc.h"
 
 unsigned int *warp_info;
 unsigned int warp_num;
@@ -187,12 +190,15 @@ void set_level(char *name, uint8_t level) {
         pack_data++;
         if (level) {
             uint16_t *level_data = (uint16_t*)pack_data;
+			uint16_t seekSize = level_data[level - 1];
+			EndianSwap16_Little(seekSize);
             pack_data += level_data[level-1];
         }
         pack_data += (game.num_levels-1)*2;
 
         // extract color channel
         color = *((uint16_t*)pack_data);
+		EndianSwap16_Little(color);
         pack_data += 2;
 
         // extract scroll behavior if available

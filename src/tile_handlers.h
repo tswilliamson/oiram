@@ -3,7 +3,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
 #include "defines.h"
 #include "simple_mover.h"
 

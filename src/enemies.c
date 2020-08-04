@@ -10,7 +10,10 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
 
 // allocation tables for enemies
 boo_t *boo[MAX_BOOS];

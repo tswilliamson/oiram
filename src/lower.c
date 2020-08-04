@@ -1,8 +1,10 @@
 #include "platform.h"
 #include "debug.h"
 
+#if !TARGET_PRIZM
 #include <stdint.h>
-#include <graphx.h>
+#endif
+#include "graphx.h"
 
 #include "images.h"
 #include "defines.h"

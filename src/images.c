@@ -3,9 +3,9 @@
 
 #include <stdlib.h>
 
-#include <graphx.h>
-#include <fileioc.h>
-#include <debug.h>
+#include "graphx.h"
+#include "fileioc.h"
+#include "debug.h"
 
 #include "images.h"
 #include "lower.h"
@@ -164,7 +164,7 @@ gfx_sprite_t *oiram_left[] = {
 void extract_tiles(void) {
     uint8_t slot, i;
     gfx_sprite_t *tile_question_box;
-    gfx_sprite_t *empty;
+   // gfx_sprite_t *empty;
     uint16_t pal_size;
     uint16_t *pal_ptr;
     uint8_t *tmp_ptr;
@@ -178,7 +178,13 @@ void extract_tiles(void) {
 
     pal_ptr = (uint16_t*)ti_GetDataPtr(slot);
     pal_size = *pal_ptr;
+	EndianSwap16_Little(pal_size);
     pal_ptr++;
+
+	uint16_t *curPal = pal_ptr;
+	for (int32 i = 0; i < pal_size; i += 2, curPal++) {
+		EndianSwap16_Little(*curPal);
+	}
     
     // set up the palette
     gfx_SetPalette(pal_ptr, pal_size, 0);
@@ -201,7 +207,7 @@ void extract_tiles(void) {
     ti_CloseAll();
     
     // extract common sprite tiles
-    empty       = tiles[TILE_EMPTY];
+   // empty       = tiles[TILE_EMPTY];
     coin_sprite = tiles[TILE_COIN];
     door_top    = tiles[228];
     door_bot    = tiles[229];

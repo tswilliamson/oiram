@@ -7,8 +7,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
+#if !TARGET_PRIZM
 #include <stdint.h>
-#include <tice.h>
+#endif
+#include "tice.h"
 
 #include "simple_mover.h"
 #include "defines.h"

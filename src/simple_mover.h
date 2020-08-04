@@ -1,7 +1,9 @@
 #ifndef SIMPLE_MOVER_H
 #define SIMPLE_MOVER_H
 
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
 
 #include "defines.h"
 

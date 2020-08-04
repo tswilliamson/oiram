@@ -18,15 +18,15 @@ include $(FXCGSDK)/toolchain/prizm_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	$(CONFIG)
-SOURCES		:=	src src/scope_timer src/gfx src/asm src/mappers
+SOURCES		:=	src src/scope_timer src/ce_sim
 DATA		:=	data  
-INCLUDES	:=  src
+INCLUDES	:=  src src/ce_sim
 
 #---------------------------------------------------------------------------------
 # options for code and add-in generation
 #---------------------------------------------------------------------------------
 
-MKG3AFLAGS := -n basic:NESizm
+MKG3AFLAGS := -n basic:Oiram
 
 OPTIMIZATION = -O2
 
@@ -36,11 +36,9 @@ CBASEFLAGS	= $(OPTIMIZATION) \
 		  -funroll-loops \
 		  -fno-trapping-math \
 		  -fno-trapv \
-		  -fno-threadsafe-statics \
 		  -fno-unwind-tables \
 		  -Wno-switch \
 		  -Wno-stringop-truncation \
-		  -Wno-class-memaccess \
 		  -Wno-narrowing \
 		  -Wno-format-overflow \
 		  -mpretend-cmove \
@@ -56,6 +54,8 @@ CXXFLAGS	=  $(CBASEFLAGS) \
 		  -fno-exceptions \
 		  -fno-threadsafe-statics \
 		  -fno-use-cxa-get-exception-ptr \
+		  -fno-threadsafe-statics \
+		  -Wno-class-memaccess \
 		  -std=c++11
 
 ASFLAGS	=	$(CFLAGS) 

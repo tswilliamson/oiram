@@ -1,7 +1,9 @@
 #ifndef LOADSCREEN_H
 #define LOADSCREEN_H
 
+#if !TARGET_PRIZM
 #include <stdint.h>
+#endif
 
 typedef struct {
     uint8_t progress;
