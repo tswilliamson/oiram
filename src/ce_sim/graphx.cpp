@@ -214,7 +214,7 @@ void gfx_RLETSprite(gfx_rletsprite_t *sprite,
 
 void gfx_SetPalette(void *palette,
 	uint24_t size,
-	uint8_t offset) {
+	uint24_t offset) {
 
 	// convert 1555 to 565 w/ separate alpha
 	uint16_t* srcColor = (uint16_t*) palette;
@@ -365,7 +365,7 @@ void gfx_BlitLines(gfx_location_t src,
 	DebugAssert(src == gfx_buffer);
 
 	if (src == gfx_buffer) {
-		Bdisp_PutDisp_DD_stripe(y_loc, num_lines);
+		Bdisp_PutDisp_DD_stripe(y_loc, y_loc+num_lines-1);
 	}
 }
 
@@ -459,6 +459,8 @@ void gfx_PrintUInt(unsigned int n, uint8_t length) {
 }
 
 void gfx_ShiftDown(uint8_t pixels) {
+	CheckClip();
+
 	int32 shiftAmt = pixels * LCD_WIDTH_PX;
 	uint16_t* VRAM = (uint16_t*)GetVRAMAddress();
 	memmove(VRAM + shiftAmt, VRAM, (LCD_WIDTH_PX * LCD_HEIGHT_PX * 2) - shiftAmt * 2);
@@ -467,7 +469,7 @@ void gfx_ShiftDown(uint8_t pixels) {
 void gfx_Tilemap(gfx_tilemap_t *tilemap,
 	uint24_t x_offset,
 	uint24_t y_offset) {
-	
+
 	int baseX = tilemap->x_loc;
 	int baseY = tilemap->y_loc;
 

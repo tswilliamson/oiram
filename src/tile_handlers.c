@@ -953,8 +953,7 @@ uint8_t warp_tile_handler(uint8_t *tile) {
     warp.enter = false;
 
     for(i = 0; i < warp_num; i += 2) {
-        unsigned int warp_enter = warp_info[i];
-		EndianSwap32_Little(warp_enter);
+        unsigned int warp_enter = warp_info[i * 3] | (warp_info[i*3+1]<< 8) | (warp_info[i*3+2] << 16);
         unsigned int warp_enter_masked = warp_enter & ~MASK_PIPE_DOOR;
 
         if (offset == warp_enter_masked) {
@@ -1010,8 +1009,7 @@ uint8_t warp_tile_handler(uint8_t *tile) {
         }
 
         if (warp.enter) {
-            unsigned int not_masked = warp_info[i+1];
-			EndianSwap32_Little(not_masked);
+			unsigned int not_masked = warp_info[i * 3 + 3] | (warp_info[i * 3 + 4] << 8) | (warp_info[i * 3 + 5] << 16);
 
             warp.exit_loc = not_masked & ~MASK_PIPE_DOOR;
 

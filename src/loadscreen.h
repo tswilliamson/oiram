@@ -23,7 +23,7 @@ void load_progress(void);
 void set_load_screen(void);
 void set_level(char *name, uint8_t level);
 
-extern unsigned int *warp_info;
+extern uint8_t *warp_info;
 extern unsigned int warp_num;
 
 #endif

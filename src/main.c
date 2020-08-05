@@ -365,11 +365,20 @@ HANDLE_DRAW_LEVEL:
         handle_pending_events();
 
         // handle timer every second
-        if (RTC_GetTicks() - curTicks >= 128) {
+		int ticks = RTC_GetTicks();
+        if (ticks - curTicks >= 128) {
             handler_timer();
-			curTicks = RTC_GetTicks();
+			curTicks = ticks;
 //            timer_IntAcknowledge = TIMER1_RELOADED;
         }
+
+		// lock to 32 FPS
+		static int lastTicks = 0;
+		while (ticks == lastTicks || ticks == lastTicks + 1 || ticks == lastTicks + 2 || ticks == lastTicks + 3) {
+			CMT_Delay_100micros(10);
+			ticks = RTC_GetTicks();
+		};
+		lastTicks = ticks;
 
         // blit the draw buffer
         gfx_BlitLines(gfx_buffer, 0, 146);

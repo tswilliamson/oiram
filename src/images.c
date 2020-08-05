@@ -181,13 +181,14 @@ void extract_tiles(void) {
 	EndianSwap16_Little(pal_size);
     pal_ptr++;
 
+	// set up the palette
 	uint16_t *curPal = pal_ptr;
 	for (int32 i = 0; i < pal_size; i += 2, curPal++) {
-		EndianSwap16_Little(*curPal);
+		uint16_t palColor = *curPal;
+		EndianSwap16_Little(palColor);
+		gfx_SetPalette(&palColor, 2, i);
 	}
     
-    // set up the palette
-    gfx_SetPalette(pal_ptr, pal_size, 0);
     tmp_ptr = (uint8_t*)pal_ptr;
     tmp_ptr += pal_size;
     

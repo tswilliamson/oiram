@@ -520,7 +520,7 @@ void gfx_SetDefaultPalette(gfx_mode_t mode);
  */
 void gfx_SetPalette(void *palette,
                     uint24_t size,
-                    uint8_t offset);
+                    uint24_t offset);
 
 /**
  * Fills the screen with a given palette index.

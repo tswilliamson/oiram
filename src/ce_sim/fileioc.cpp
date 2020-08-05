@@ -222,43 +222,41 @@ static void FindFiles(const char* path, foundFile* toArray, int& numFound, int m
 char *ti_Detect(void **curr_search_posistion, const char *detection_string) {
 	// todo : detection string
 	static foundFile files[64];
-	static int lastFound = 0;
+	static int numFound = -1;
 
 	// only search once 
-	if (!lastFound || *curr_search_posistion == nullptr) {
-		int numFound = 0;
+	if (numFound == -1) {
+		numFound = 0;
 		FindFiles("\\\\fls0\\*.8xv", files, numFound, 64);
 
-		// filter detection string
-		int32 numCulled = 0;
-		if (detection_string) {
-			int detectLength = strlen(detection_string);
-			DebugAssert(detectLength < 32);
-			for (int32 i = 0; i < numFound; i++) {
-				char readFile[32];
-				int handle = OpenVar(files[i].path, READ, true);
-				DebugAssert(handle != -1);
-				
-				if (Bfile_ReadFile_OS(handle, readFile, detectLength, sizeof(tifile)) != detectLength ||
-					memcmp(readFile, detection_string, detectLength)) {
-
-					files[i].path[0] = 0;
-					numCulled++;
-				}
-
-				Bfile_CloseFile_OS(handle);
-			}
+		for (int i = 0; i < numFound; i++) {
+			*strrchr(files[i].path, '.') = 0;
 		}
-
-		lastFound = numFound;
-		*curr_search_posistion = 0;
 	}
 
 	int* curFile = (int*) curr_search_posistion;
-	while (lastFound > *curFile) {
-		if (files[*curFile].path[0]) {
-			char* ret = files[*curFile].path;
-			*strrchr(ret, '.') = 0;
+	while (numFound > *curFile) {
+		foundFile& slotFile = files[*curFile];
+		bool bValid = true;
+		if (detection_string) {
+			int detectLength = strlen(detection_string);
+			DebugAssert(detectLength < 32);
+
+			char readFile[32];
+			int handle = OpenVar(slotFile.path, READ, false);
+			DebugAssert(handle != -1);
+
+			if (Bfile_ReadFile_OS(handle, readFile, detectLength, sizeof(tifile)) != detectLength ||
+				memcmp(readFile, detection_string, detectLength)) {
+
+				bValid = false;
+			}
+
+			Bfile_CloseFile_OS(handle);
+		}
+
+		if (bValid) {
+			char* ret = slotFile.path;
 			curFile[0]++;
 			return ret;
 		} else {

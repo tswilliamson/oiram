@@ -24,7 +24,7 @@
 #include "keypadc.h"
 #include "fileioc.h"
 
-unsigned int *warp_info;
+uint8_t *warp_info;
 unsigned int warp_num;
 
 pack_info_t pack_info[256];
@@ -192,7 +192,7 @@ void set_level(char *name, uint8_t level) {
             uint16_t *level_data = (uint16_t*)pack_data;
 			uint16_t seekSize = level_data[level - 1];
 			EndianSwap16_Little(seekSize);
-            pack_data += level_data[level-1];
+            pack_data += seekSize;
         }
         pack_data += (game.num_levels-1)*2;
 
@@ -211,7 +211,7 @@ void set_level(char *name, uint8_t level) {
         // get the number of pipes
         num_pipes = *pack_data;
         pack_data++;
-        warp_info = (unsigned int*)pack_data;
+        warp_info = pack_data;
         warp_num = num_pipes * 2;
 
         pack_data += num_pipes * 6;
