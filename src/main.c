@@ -100,7 +100,7 @@ void handler_keypad_alternate(void) {
     }
     pressed_special = pressed_s;
 
-    if (g1_key & kb_Del) {
+    if (kb_Data[EXIT_KEY_GROUP] & EXIT_KEY) {
         if (!oiram.failed) {
             game.exit = true;
             game.fastexit = true;
@@ -147,7 +147,7 @@ void handler_keypad(void) {
     }
     pressed_special = pressed_s;
 
-    if (g1_key & kb_Del) {
+    if (kb_Data[EXIT_KEY_GROUP] & EXIT_KEY) {
         if (!oiram.failed) {
             game.exit = true;
             game.fastexit = true;

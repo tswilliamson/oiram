@@ -8,11 +8,64 @@
 
 #include "fxcg/display.h"
 
+// the back buffer exits in VRAM area on the calculator and we use DMA to blit it, but
+// we need an extra buffer for the simulator since it doesn't use DMA
+static uint16_t* BackBuffer() {
+#if TARGET_PRIZM
+	return (uint16_t*) GetVRAMAddress();
+#else
+	static uint16_t StaticBuffer[gfx_lcdWidth*gfx_lcdHeight];
+	return StaticBuffer;
+#endif
+}
+
+#if TARGET_PRIZM
+#define LCD_GRAM	0x202
+#define LCD_BASE	0xB4000000
+#define SYNCO() __asm__ volatile("SYNCO\n\t":::"memory");
+
+// DMA0 operation register
+#define DMA0_DMAOR	(volatile unsigned short*)0xFE008060
+#define DMA0_CHCR_0	(volatile unsigned*)0xFE00802C
+#define DMA0_SAR_0	(volatile unsigned*)0xFE008020
+#define DMA0_DAR_0	(volatile unsigned*)0xFE008024
+#define DMA0_TCR_0	(volatile unsigned*)0xFE008028
+
+static inline void DmaWaitNext(void) {
+	while (1) {
+		if ((*DMA0_DMAOR) & 4)//Address error has occurred stop looping
+			break;
+		if ((*DMA0_CHCR_0) & 2)//Transfer is done
+			break;
+	}
+
+	SYNCO();
+	*DMA0_CHCR_0 &= ~1;
+	*DMA0_DMAOR = 0;
+}
+
+static inline void DmaDrawStrip(void* srcAddress, unsigned int size) {
+	// disable dma so we can issue new command
+	*DMA0_CHCR_0 &= ~1;
+	*DMA0_DMAOR = 0;
+
+	*((volatile unsigned*)MSTPCR0) &= ~(1 << 21);//Clear bit 21
+	*DMA0_SAR_0 = ((unsigned int)srcAddress) & 0x1FFFFFFF;           //Source address is IL memory (avoids bus conflicts)
+	*DMA0_DAR_0 = LCD_BASE & 0x1FFFFFFF;				//Destination is LCD
+	*DMA0_TCR_0 = size / 32;							//Transfer count bytes/32
+	*DMA0_CHCR_0 = 0x00101400;
+	*DMA0_DMAOR |= 1;//Enable DMA on all channels
+	*DMA0_DMAOR &= ~6;//Clear flags
+
+	*DMA0_CHCR_0 |= 1;//Enable channel0 DMA
+}
+#endif
+
 struct GraphX_Context {
 	int Clip_MinX = 0;
 	int Clip_MinY = 0;
-	int Clip_MaxX = LCD_WIDTH_PX;
-	int Clip_MaxY = LCD_HEIGHT_PX;
+	int Clip_MaxX = gfx_lcdWidth;
+	int Clip_MaxY = gfx_lcdHeight;
 
 	int TextX = 0;
 	int TextY = 0;
@@ -68,18 +121,18 @@ struct ClipChecker {
 
 	uint16_t Hash(uint16_t* row) {
 		uint16_t val = 0x1E37;
-		for (int x = 0; x < LCD_WIDTH_PX; x++) {
+		for (int x = 0; x < gfx_lcdWidth; x++) {
 			val = (val << 1) ^ (row[x]) ^ (val >> 15);
 		}
 		return val;
 	}
 
 	uint16_t HashTop() {
-		return Hash(((uint16_t*)GetVRAMAddress()) - LCD_WIDTH_PX);
+		return Hash(BackBuffer() - gfx_lcdWidth);
 	}
 
 	uint16_t HashBottom() {
-		return Hash(((uint16_t*)GetVRAMAddress()) + LCD_WIDTH_PX * LCD_HEIGHT_PX);
+		return Hash(BackBuffer() + gfx_lcdWidth * gfx_lcdHeight);
 	}
 
 	ClipChecker() {
@@ -99,10 +152,9 @@ struct ClipChecker {
 #endif
 
 static GraphX_Context GFX;
-const int ScreenOffset = (LCD_WIDTH_PX - gfx_lcdWidth) / 2;
 
 uint16_t* GetTargetAddr(int x, int y) {
-	return (uint16_t*)GetVRAMAddress() + LCD_WIDTH_PX * y + x + ScreenOffset;
+	return BackBuffer() + gfx_lcdWidth * y + x;
 }
 
 template<bool bClip, bool bTransparent>
@@ -124,7 +176,7 @@ void RenderSprite(gfx_sprite_t *sprite, int x, int y) {
 
 	if (y0) {
 		spriteData += y0 * sprite->width;
-		targetLine += y0 * LCD_WIDTH_PX;
+		targetLine += y0 * gfx_lcdWidth;
 	}
 
 	for (; y0 < h; y0++) {
@@ -134,7 +186,7 @@ void RenderSprite(gfx_sprite_t *sprite, int x, int y) {
 			}
 		}
 		spriteData += sprite->width;
-		targetLine += LCD_WIDTH_PX;
+		targetLine += gfx_lcdWidth;
 	}
 }
 
@@ -164,7 +216,7 @@ void gfx_ScaledTransparentSprite_NoClip(gfx_sprite_t *sprite,
 
 	uint8_t* spriteData = sprite->data;
 	uint16_t* targetLine = GetTargetAddr(x, y);
-	const unsigned int pitch = LCD_WIDTH_PX * height_scale;
+	const unsigned int pitch = gfx_lcdWidth * height_scale;
 
 	for (int y0 = 0; y0 < sprite->height; y0++) {
 		uint16_t* bufferTarget = targetLine;
@@ -175,7 +227,7 @@ void gfx_ScaledTransparentSprite_NoClip(gfx_sprite_t *sprite,
 					for (int xScale = 0; xScale < width_scale; xScale++) {
 						bufferTarget[xScale + yOffset] = GFX.ResolvePalette(*(spriteData));
 					}
-					yOffset += LCD_WIDTH_PX;
+					yOffset += gfx_lcdWidth;
 				}
 			}
 
@@ -260,14 +312,26 @@ void gfx_Begin() {
 	// prepare for full color mode
 	Bdisp_EnableColor(1);
 	EnableStatusArea(3);
+	Bdisp_Fill_VRAM(0, 3);
+	DrawFrame(0);
+	Bdisp_PutDisp_DD();
 }
 
 void gfx_End() {
+#if TARGET_PRIZM
+	DmaWaitNext();
+	*((volatile unsigned*)MSTPCR0) &= ~(1 << 21);//Clear bit 21
+#endif
 }
 
 void gfx_FillScreen(uint8_t index) {
 	uint16_t Color = GFX.ResolvePalette(index);
-	Bdisp_Fill_VRAM(Color, 3);
+	uint16_t* DestColor = BackBuffer();
+	for (int y = 0; y < gfx_lcdHeight; y++) {
+		for (int x = 0; x < gfx_lcdWidth; x++) {
+			*(DestColor++) = Color;
+		}
+	}
 }
 
 void gfx_Rectangle(int x,
@@ -296,12 +360,12 @@ void gfx_Rectangle_NoClip(uint24_t x,
 	for (uint32 x0 = 0; x0 < width; x0++) {
 		*(bufferLine++) = GFX.CurColor;
 	}
-	targetLine += LCD_WIDTH_PX;
+	targetLine += gfx_lcdWidth;
 
 	for (uint32 y0 = 1; y0 + 1 < height; y0++) {
 		targetLine[0] = GFX.CurColor;
 		targetLine[width - 1] = GFX.CurColor;
-		targetLine += LCD_WIDTH_PX;
+		targetLine += gfx_lcdWidth;
 	}
 
 	bufferLine = targetLine;
@@ -333,7 +397,7 @@ void gfx_FillRectangle_NoClip(uint24_t x,
 		for (uint32 x0 = 0; x0 < width; x0++) {
 			targetLine[x0] = GFX.CurColor;
 		}
-		targetLine += LCD_WIDTH_PX;
+		targetLine += gfx_lcdWidth;
 	}
 }
 
@@ -344,12 +408,39 @@ void gfx_SetPixel(uint24_t x, uint8_t y) {
 	targetLine[0] = GFX.CurColor;
 }
 
+static void BlitScreenSection(int y1, int h) {
+	uint16_t* SourceAddr = BackBuffer() + (gfx_lcdWidth * y1);
+	const int ScreenOffset = (LCD_WIDTH_PX - gfx_lcdWidth) / 2;
+
+#if TARGET_PRIZM
+	DmaWaitNext();
+
+	Bdisp_WriteDDRegister3_bit7(1);
+	Bdisp_DefineDMARange(ScreenOffset, ScreenOffset + gfx_lcdWidth - 1, y1, y1+h);
+	Bdisp_DDRegisterSelect(LCD_GRAM);
+
+	DmaDrawStrip(SourceAddr, h * gfx_lcdWidth * 2);
+	DmaWaitNext();
+#endif
+
+#if TARGET_WINSIM
+	h = min(LCD_HEIGHT_PX, y1 + h) - y1;
+	if (h > 0) {
+		uint16_t* TargetAddr = ((uint16_t*)GetVRAMAddress()) + ScreenOffset + LCD_WIDTH_PX * y1;
+		for (int32 i = 0; i < h; i++, TargetAddr += LCD_WIDTH_PX, SourceAddr += gfx_lcdWidth) {
+			memcpy(TargetAddr, SourceAddr, gfx_lcdWidth * 2);
+		}
+		Bdisp_PutDisp_DD();
+	}
+#endif
+}
+
 void gfx_Blit(gfx_location_t src) {
 	// only one way supported
 	DebugAssert(src == gfx_buffer);
 
 	if (src == gfx_buffer) {
-		Bdisp_PutDisp_DD();
+		BlitScreenSection(0, 224);
 	}
 }
 
@@ -365,7 +456,7 @@ void gfx_BlitLines(gfx_location_t src,
 	DebugAssert(src == gfx_buffer);
 
 	if (src == gfx_buffer) {
-		Bdisp_PutDisp_DD_stripe(y_loc, y_loc+num_lines-1);
+		BlitScreenSection(y_loc, num_lines);
 	}
 }
 
@@ -396,7 +487,7 @@ void gfx_FillCircle(int x,
 				targetLine[curX] = GFX.CurColor;
 			}
 		}
-		targetLine += LCD_WIDTH_PX;
+		targetLine += gfx_lcdWidth;
 	}
 }
 
@@ -437,10 +528,10 @@ void gfx_SetTextXY(int x, int y) {
 void gfx_PrintStringXY(const char *string, int x, int y) {
 	CheckClip();
 
-	if (y + arial_small.height >= LCD_HEIGHT_PX)
+	if (y + arial_small.height >= gfx_lcdHeight)
 		return;
 
-	CalcType_Draw(&arial_small, string, x + ScreenOffset, y, GFX.CurTextColor, 0, 0);
+	CalcType_Draw(&arial_small, string, x, y, GFX.CurTextColor, (uint8*) BackBuffer(), 320);
 }
 
 void gfx_PrintUInt(unsigned int n, uint8_t length) {
@@ -461,9 +552,9 @@ void gfx_PrintUInt(unsigned int n, uint8_t length) {
 void gfx_ShiftDown(uint8_t pixels) {
 	CheckClip();
 
-	int32 shiftAmt = pixels * LCD_WIDTH_PX;
-	uint16_t* VRAM = (uint16_t*)GetVRAMAddress();
-	memmove(VRAM + shiftAmt, VRAM, (LCD_WIDTH_PX * LCD_HEIGHT_PX * 2) - shiftAmt * 2);
+	int32 shiftAmt = pixels * gfx_lcdWidth;
+	uint16_t* VRAM = BackBuffer();
+	memmove(VRAM + shiftAmt, VRAM, (gfx_lcdWidth * gfx_lcdHeight * 2) - shiftAmt * 2);
 }
 
 void gfx_Tilemap(gfx_tilemap_t *tilemap,

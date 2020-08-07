@@ -27,6 +27,9 @@ typedef uint16_t kb_lkey_t; /**< Long key type   */
  */
 void kb_Scan(void);
 
+// Prizm function to include GetKey call
+void kb_Scan_with_GetKey(void);
+
 /**
  * Scans the given keyboard row and returns the row value
  * @param row Row to scan

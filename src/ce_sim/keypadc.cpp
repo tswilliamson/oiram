@@ -71,6 +71,12 @@ void kb_Scan(void) {
 	}
 }
 
+void kb_Scan_with_GetKey() {
+	int key = 0;
+	GetKey(&key);
+	kb_Scan();
+}
+
 kb_key_t kb_ScanGroup(uint8_t row) {
 	const int* scan = &groups[row-1];
 	uint8_t scanValue = 0;

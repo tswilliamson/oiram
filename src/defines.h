@@ -135,4 +135,12 @@ extern game_t game;
 
 #define oiram_collision(a, b, c, d) gfx_CheckRectangleHotspot(oiram.x, oiram.y, OIRAM_HITBOX_WIDTH, oiram.hitbox.height, a, b, c, d)
 
+#if TARGET_PRIZM
+#define EXIT_KEY kb_Square
+#define EXIT_KEY_GROUP 2
+#else
+#define EXIT_KEY kb_Del
+#define EXIT_KEY_GROUP 1
+#endif
+
 #endif

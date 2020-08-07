@@ -386,7 +386,7 @@ void set_load_screen(void) {
     gfx_BlitBuffer();
 
     // debounce
-    while (kb_ScanGroup(1) & kb_Del);
+    while (kb_ScanGroup(EXIT_KEY_GROUP) & EXIT_KEY);
 
     for (;;) {
         kb_key_t grp7;
@@ -394,7 +394,7 @@ void set_load_screen(void) {
         kb_key_t grp6;
 
         // scan the keypad
-        kb_Scan();
+		kb_Scan();
 
         // debounce
         delay(20);
@@ -403,9 +403,10 @@ void set_load_screen(void) {
         grp6 = kb_Data[6];
 		_grp1 = kb_Data[1];
 
-        if (_grp1 == kb_Del) {
+        if (kb_Data[EXIT_KEY_GROUP] == EXIT_KEY) {
             save_progress();
-            exit(0);
+			kb_Scan_with_GetKey();
+            //exit(0);
         }
         if (grp6 == kb_Enter || _grp1 == kb_2nd) {
             break;
