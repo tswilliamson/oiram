@@ -146,6 +146,8 @@ ti_var_t ti_Open(const char *name, const char *mode) {
 				return 0;
 			}
 
+			Bfile_CloseFile_OS(handle);
+
 			strcpy(AllFiles[slot].path, name);
 
 			AllFiles[slot].pos = 0;

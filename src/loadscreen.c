@@ -406,7 +406,7 @@ void set_load_screen(void) {
         if (kb_Data[EXIT_KEY_GROUP] == EXIT_KEY) {
             save_progress();
 			kb_Scan_with_GetKey();
-            //exit(0);
+			goto redraw_screen;
         }
         if (grp6 == kb_Enter || _grp1 == kb_2nd) {
             break;

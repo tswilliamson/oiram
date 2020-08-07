@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "ce_sim.h"
 #include "graphx.h"
+#include "keypadc.h"
 
 #include "calctype/fonts/arial_small/arial_small.h"
 
@@ -410,9 +411,9 @@ void gfx_SetPixel(uint24_t x, uint8_t y) {
 
 static void BlitScreenSection(int y1, int h) {
 	uint16_t* SourceAddr = BackBuffer() + (gfx_lcdWidth * y1);
-	const int ScreenOffset = (LCD_WIDTH_PX - gfx_lcdWidth) / 2;
 
 #if TARGET_PRIZM
+	const int ScreenOffset = (396 - gfx_lcdWidth) / 2;
 	DmaWaitNext();
 
 	Bdisp_WriteDDRegister3_bit7(1);
@@ -424,6 +425,7 @@ static void BlitScreenSection(int y1, int h) {
 #endif
 
 #if TARGET_WINSIM
+	const int ScreenOffset = (LCD_WIDTH_PX - gfx_lcdWidth) / 2;
 	h = min(LCD_HEIGHT_PX, y1 + h) - y1;
 	if (h > 0) {
 		uint16_t* TargetAddr = ((uint16_t*)GetVRAMAddress()) + ScreenOffset + LCD_WIDTH_PX * y1;
@@ -531,6 +533,11 @@ void gfx_PrintStringXY(const char *string, int x, int y) {
 	if (y + arial_small.height >= gfx_lcdHeight)
 		return;
 
+	int32 width = CalcType_Width(&arial_small, string);
+	uint16_t oldColor = GFX.CurColor;
+	GFX.CurColor = GFX.CurTextBGColor;
+	gfx_FillRectangle_NoClip(x, y, width, arial_small.height-1);
+	GFX.CurColor = oldColor;
 	CalcType_Draw(&arial_small, string, x, y, GFX.CurTextColor, (uint8*) BackBuffer(), 320);
 }
 
@@ -591,4 +598,39 @@ void gfx_Tilemap(gfx_tilemap_t *tilemap,
 			gfx_Sprite(sprite, curX, curY);
 		}
 	}
+}
+
+static void ResolveBufferToVRAM() {
+	const int ScreenOffset = (LCD_WIDTH_PX - gfx_lcdWidth) / 2;
+
+	// copy screen
+	for (int y = 215; y >= 0; y--) {
+		uint16_t* SrcColor = &BackBuffer()[gfx_lcdWidth * y];
+		uint16_t* DestColor = ((uint16_t*)GetVRAMAddress()) + LCD_WIDTH_PX * y + ScreenOffset;
+		memcpy(DestColor, SrcColor, gfx_lcdWidth * 2);
+	}
+
+	// black out sides
+	for (int y = 215; y >= 0; y--) {
+		uint16_t* DestColor = ((uint16_t*)GetVRAMAddress()) + LCD_WIDTH_PX * y;
+		memset(DestColor, 0, ScreenOffset * 2);
+		DestColor += ScreenOffset + gfx_lcdWidth;
+		memset(DestColor, 0, ScreenOffset * 2);
+	}
+}
+
+void kb_Scan_with_GetKey() {
+#ifdef TARGET_PRIZM
+	// before calling getkey we need to resolve the VRAM back into the system pitch:
+	ResolveBufferToVRAM();
+#endif
+
+	int key = 0;
+	GetKey(&key);
+	kb_Scan();
+
+	// clear VRAM and draw frame cause we mind have went to menu, onus is on app to redraw screen
+	Bdisp_Fill_VRAM(0, 3);
+	DrawFrame(0);
+	Bdisp_PutDisp_DD();
 }
