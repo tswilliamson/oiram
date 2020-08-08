@@ -1078,6 +1078,7 @@ uint8_t moveable_tile_left_bottom(int x, int y) {
 
 	if (x < 0) { return false; }
 	if (y < 0) { return true; }
+	if (y >= tilemap.height * tilemap.tile_height) return true;
 	tile = gfx_TilePtr(&tilemap, test_x = x, test_y = y);
 	return (*tile_handler[*tile])(tile);
 }
@@ -1088,6 +1089,7 @@ uint8_t moveable_tile_right_bottom(int x, int y) {
 
 	if (x < 0) { return false; }
 	if (y < 0) { return true; }
+	if (y >= tilemap.height * tilemap.tile_height) return true;
 	tile = gfx_TilePtr(&tilemap, test_x = x, test_y = y);
 	return (*tile_handler[*tile])(tile);
 }
