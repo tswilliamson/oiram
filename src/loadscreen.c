@@ -244,9 +244,9 @@ void set_load_screen(void) {
     uint8_t search_current;
     void *search_pos;
     const char *search_str;
-    const char *str_2nd = "[2nd]";
-    const char *str_up = "[up]";
-    const char *str_alpha = "[alpha]";
+    const char *str_2nd = "[SHIFT]";
+    const char *str_up = "[UP]";
+    const char *str_alpha = "[ALPHA]";
     const char *str_1;
     const char *str_2;
     const char *str_3;
@@ -299,6 +299,9 @@ void set_load_screen(void) {
     gfx_TransparentSprite(tileset_tiles[222], 56, 84);
     gfx_TransparentSprite(tileset_tiles[223], 40, 84);
 
+	gfx_SetTextFGColor(12);
+	gfx_PrintStringXY("Prizm port by TSW", 150, 70);
+
     gfx_SetTextFGColor(WHITE_INDEX);
     gfx_PrintStringXY("By Mateo", 150, 58);
     gfx_SetColor(DARK_BLUE_INDEX);
@@ -308,7 +311,7 @@ void set_load_screen(void) {
 
     gfx_TransparentSprite(mushroom, 5, selected_pack*10 + 103);
 
-    gfx_PrintStringXY("Controls", 5, 187);
+//    gfx_PrintStringXY("Controls", 5, 187);
 
     if (game.alternate_keypad) {
         str_1 = str_2nd;
@@ -320,16 +323,16 @@ void set_load_screen(void) {
         str_3 = str_up;
     }
 
-    gfx_PrintStringXY(str_1, 9, 209);
-    gfx_PrintStringXY(str_2, 9, 219);
-    gfx_PrintStringXY(str_3, 9, 229);
-    gfx_PrintStringXY("[del]", 9, 199);
-    gfx_PrintStringXY("Quit", 65, 199);
-    gfx_PrintStringXY("Run", 65, 209);
-    gfx_PrintStringXY("Jump", 65, 219);
-    gfx_PrintStringXY("Special, pickup shells", 65, 229);
+    gfx_PrintStringXY(str_1, 9, 184);
+    gfx_PrintStringXY(str_2, 9, 196);
+    gfx_PrintStringXY(str_3, 9, 208);
+//    gfx_PrintStringXY("[del]", 9, 199);
+ //   gfx_PrintStringXY("Quit", 65, 199);
+    gfx_PrintStringXY("Run", 65, 184);
+    gfx_PrintStringXY("Jump", 65, 196);
+    gfx_PrintStringXY("Special, pickup shells", 65, 208);
 
-    gfx_PrintStringXY("Press <> to select level", 150, 199);
+    gfx_PrintStringXY("Press <> to select level", 150, 184);
 
     tmp = 0;
     num_packs = 0;
@@ -413,6 +416,7 @@ void set_load_screen(void) {
         }
         if (_grp1 == kb_Mode) {
             game.alternate_keypad = !game.alternate_keypad;
+			while (kb_ScanGroup(1) == kb_Mode) {}
             goto redraw_screen;
         }
         if (grp7 == kb_Down || grp7 == kb_Up) {

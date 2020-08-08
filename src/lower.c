@@ -16,33 +16,33 @@ const unsigned int oiram_score_chain[] = { 100, 200, 400, 800, 1000, 2000, 4000,
 gfx_sprite_t *oiram_score_chain_sprites[9];
 
 void draw_time(void) {
-    gfx_SetTextXY(285, 144);
+    gfx_SetTextXY(285, 185);
     gfx_PrintUInt(game.seconds, 3);
-    gfx_BlitLines(gfx_buffer, 144, 8);
+    gfx_BlitLines(gfx_buffer, 185, 10);
 }
 
 void draw_score(void) {
-    gfx_SetTextXY(253, 164);
+    gfx_SetTextXY(263, 200);
     gfx_PrintUInt(game.score, 7);
-    gfx_BlitLines(gfx_buffer, 161, 14);
+    gfx_BlitLines(gfx_buffer, 200, 10);
 }
 
 void draw_level(void) {
-    gfx_PrintStringXY("LEVEL ", 12, 207);
+    gfx_PrintStringXY("LEVEL ", 130, 200);
     gfx_PrintUInt(game.level + 1, 3);
-    gfx_BlitLines(gfx_buffer, 207, 8);
+    gfx_BlitLines(gfx_buffer, 200, 10);
 }
 
 void draw_coins(void) {
-    gfx_SetTextXY(29, 144);
+    gfx_SetTextXY(29, 185);
     gfx_PrintUInt(game.coins, 2);
-    gfx_BlitLines(gfx_buffer, 144, 8);
+    gfx_BlitLines(gfx_buffer, 185, 8);
 }
 
 void draw_lives(void) {
-    gfx_SetTextXY(29, 164);
+    gfx_SetTextXY(29, 200);
     gfx_PrintUInt(oiram.lives, 2);
-    gfx_BlitLines(gfx_buffer, 164, 8);
+    gfx_BlitLines(gfx_buffer, 200, 10);
 }
 
 void add_life(void) {

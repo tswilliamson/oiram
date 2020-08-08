@@ -528,17 +528,27 @@ void gfx_SetTextXY(int x, int y) {
 }
 
 void gfx_PrintStringXY(const char *string, int x, int y) {
-	CheckClip();
-
 	if (y + arial_small.height >= gfx_lcdHeight)
 		return;
 
+	// render background behind text if BG color is not clear color
 	int32 width = CalcType_Width(&arial_small, string);
-	uint16_t oldColor = GFX.CurColor;
-	GFX.CurColor = GFX.CurTextBGColor;
-	gfx_FillRectangle_NoClip(x, y, width, arial_small.height-1);
-	GFX.CurColor = oldColor;
-	CalcType_Draw(&arial_small, string, x, y, GFX.CurTextColor, (uint8*) BackBuffer(), 320);
+
+	{
+		CheckClip();
+
+		if (GFX.CurTextBGColor != GFX.CurTextClearColor) {
+			uint16_t oldColor = GFX.CurColor;
+			GFX.CurColor = GFX.CurTextBGColor;
+			gfx_FillRectangle_NoClip(x, y, width, arial_small.height - 1);
+			GFX.CurColor = oldColor;
+		}
+
+		CalcType_Draw(&arial_small, string, x, y, GFX.CurTextColor, (uint8*)BackBuffer(), 320);
+	}
+
+	GFX.TextX = x + width;
+	GFX.TextY = y;
 }
 
 void gfx_PrintUInt(unsigned int n, uint8_t length) {

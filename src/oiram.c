@@ -285,8 +285,8 @@ EXECUTE_FAIL:
             oiram.started_fail = true;
         }
         oiram.fail_y += oiram.vy;
-        if (oiram.vy < 3) {oiram.vy++; }
-        if (oiram.fail_y > fail_y + 65) {
+        if (oiram.vy < 5) {oiram.vy++; }
+        if (oiram.fail_y > fail_y + 97) {
             game.exit = true;
         }
         return;
@@ -383,11 +383,11 @@ EXECUTE_FAIL:
 
         if (oiram.is_flying) {
             gfx_SetColor(WHITE_INDEX);
-            gfx_FillRectangle_NoClip(118, 146, 79, 2);
+            gfx_FillRectangle_NoClip(118, 187, 79, 2);
             new_vx = 5;
         } else {
             gfx_SetColor(252);
-            gfx_FillRectangle_NoClip(119, 146, 79, 2);
+            gfx_FillRectangle_NoClip(119, 187, 79, 2);
             gfx_SetColor(WHITE_INDEX);
             new_vx = 2;
             if (!oiram.fly_count) {
@@ -403,7 +403,7 @@ EXECUTE_FAIL:
         } else {
             if (pressed_left || pressed_right) {
                 if (pressed_2nd) {
-                    gfx_FillRectangle_NoClip(118, 146, abs(mm)*2, 2);
+                    gfx_FillRectangle_NoClip(118, 187, abs(mm)*2, 2);
 HANDLE_DOWN:
                     on_slope = TEST_NONE;
 
@@ -442,7 +442,7 @@ HANDLE_REDUCED_SPEED:
                 }
             }
 
-            gfx_BlitLines(gfx_buffer, 146, 2);
+            gfx_BlitLines(gfx_buffer, 187, 2);
         }
 
         // check if no momentum and set sprites

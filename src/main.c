@@ -160,15 +160,12 @@ static void (*handle_keypad)(void);
 void black_circles(void) {
     uint8_t radius;
     for(radius = 5; radius < 200; radius += 6) {
-        gfx_FillCircle(160, 60, radius);
+        gfx_FillCircle(160, 92, radius);
         gfx_BlitBuffer();
     }
 }
 
 void double_rectangle(uint24_t x, uint8_t y, uint24_t width, uint8_t height) {
-	// todo : remove this, just to prevent memory corruption right now
-	if (y + height >= 216) return;
-
     uint24_t xw = x + width;
     uint8_t yh = y + height;
 
@@ -262,8 +259,8 @@ HANDLE_DRAW_LEVEL:
     // draw the splash starting items
     gfx_FillScreen(BLACK_INDEX);
 
-    gfx_TransparentSprite(oiram_logo, 116, 55);
-    gfx_TransparentSprite(oiram_start, 165, 55);
+    gfx_TransparentSprite(oiram_logo, 116, 87);
+    gfx_TransparentSprite(oiram_start, 165, 87);
 
     gfx_SetTextFGColor(WHITE_INDEX);
     gfx_SetTextBGColor(DARK_BLUE_INDEX);
@@ -303,13 +300,13 @@ HANDLE_DRAW_LEVEL:
     oiram_start_location();
 
     gfx_SetColor(WHITE_INDEX);
-    double_rectangle(4, 133, 312, 48);
-    double_rectangle(4, 194, 80, 33);
-    gfx_TransparentSprite_NoClip(coin_sprite, 10, 140);
-    gfx_TransparentSprite_NoClip(oiram_lives, 10, 164);
-    gfx_TransparentSprite_NoClip(oiram_clock, 270, 143);
+    double_rectangle(4, 177, 312, 39);
+    //double_rectangle(4, 190, 80, 33);
+    gfx_TransparentSprite_NoClip(coin_sprite, 10, 181);
+    gfx_TransparentSprite_NoClip(oiram_lives, 10, 203);
+    gfx_TransparentSprite_NoClip(oiram_clock, 270, 184);
 
-    gfx_Rectangle_NoClip(118, 145, 81, 4);
+    gfx_Rectangle_NoClip(118, 186, 81, 4);
 
     draw_coins();
     draw_time();
@@ -381,7 +378,7 @@ HANDLE_DRAW_LEVEL:
 		lastTicks = ticks;
 
         // blit the draw buffer
-        gfx_BlitLines(gfx_buffer, 0, 146);
+        gfx_BlitLines(gfx_buffer, 0, 178);
 
         // animate the things
         if (!easter_egg2) {
