@@ -68,10 +68,11 @@ void ti_CloseAll(void);
  * "r+" - Opens a file to update both reading and writing. The file must exist. Moves file from archive to RAM if in archive.   <br>
  * "w+" - Creates an empty file for both reading and writing. Overwrites file if already exists.                                <br>
  * "a+" - Opens a file for reading and appending. Moves file from archive to RAM if in archive. Created if it does not exist.
+ * @param readSize : amount of variable being read, -1 means whole variable
  * @returns Slot variable
  * @note If there isn't enough memory to create the variable, or a slot isn't open, zero (0) is returned
  */
-ti_var_t ti_Open(const char *name, const char *mode);
+ti_var_t ti_Open(const char *name, const char *mode, int readSize);
 
 /**
  * Opens a variable

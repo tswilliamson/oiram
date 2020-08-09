@@ -76,7 +76,7 @@ void load_progress(void) {
     uint8_t search_current = 1;
 
     ti_CloseAll();
-    if ((variable = ti_Open(save_name, "r"))) {
+    if ((variable = ti_Open(save_name, "r", -1))) {
         num_packs_in_var = (uint8_t)ti_GetC(variable);
         pack_info_in_var = ti_GetDataPtr(variable);
         ti_Seek(-1, SEEK_END, variable);
@@ -172,7 +172,7 @@ void set_level(char *name, uint8_t level) {
     game.num_levels = 0;
     ti_CloseAll();
 
-    if ((slot = ti_Open(name, "r"))) {
+    if ((slot = ti_Open(name, "r", -1))) {
         uint8_t *pack_data;
         uint8_t num_pipes;
 
@@ -197,8 +197,7 @@ void set_level(char *name, uint8_t level) {
         pack_data += (game.num_levels-1)*2;
 
         // extract color channel
-        color = *((uint16_t*)pack_data);
-		EndianSwap16_Little(color);
+		color = pack_data[0] | (pack_data[1] << 8);
         pack_data += 2;
 
         // extract scroll behavior if available
@@ -346,7 +345,7 @@ void set_load_screen(void) {
                 uint8_t max_select;
                 uint8_t progress;
 
-                slot = ti_Open((char*)var_name, "r");
+                slot = ti_Open((char*)var_name, "r", 128);
                 pack_data = get_pack_pointer(slot);
 
                 gfx_PrintStringXY((char*)pack_data, 23, y + 4);

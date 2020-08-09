@@ -382,7 +382,9 @@ void gfx_FillRectangle(int x,
 
 	GFX.ClipRect(x, y, width, height);
 
-	gfx_FillRectangle_NoClip(x, y, width, height);
+	if (width > 0 && height > 0) {
+		gfx_FillRectangle_NoClip(x, y, width, height);
+	}
 }
 
 

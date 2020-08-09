@@ -56,6 +56,7 @@ struct CEFileSlot {
 	tifile file;
 	char path[32];
 	uint8_t* data;
+	int dataSize;
 	uint32 pos;
 
 	CEFileSlot() : data(nullptr) {}
@@ -118,15 +119,20 @@ static int OpenVar(const char* name, int mode, bool bHasExtension = false) {
  * @returns Slot variable
  * @note If there isn't enough memory to create the variable, or a slot isn't open, zero (0) is returned
  */
-ti_var_t ti_Open(const char *name, const char *mode) {
+ti_var_t ti_Open(const char *name, const char *mode, int readSize) {
 	int slot = FindSlot(name);
 	if (slot == -1)
 		return 0;
 
 	if (!strcmp(mode, "r")) {
-		// data already read
+		// data already read?
 		if (AllFiles[slot].data) {
-			return slot + 1;
+			if (AllFiles[slot].dataSize == readSize)
+				return slot + 1;
+			else {
+				free(AllFiles[slot].data);
+				AllFiles[slot].data = nullptr;
+			}
 		}
 
 		int handle = OpenVar(name, READ);
@@ -139,8 +145,15 @@ ti_var_t ti_Open(const char *name, const char *mode) {
 			AllFiles[slot].file.DoEndianSwap();
 
 			const int var_length = AllFiles[slot].file.data.var_length;
-			AllFiles[slot].data = (uint8_t*) malloc(var_length);
-			if (Bfile_ReadFile_OS(handle, AllFiles[slot].data, var_length, -1) != var_length) {
+			const int readAmt = readSize == -1 ? var_length : min(readSize, var_length);
+			AllFiles[slot].data = (uint8_t*) malloc(readAmt);
+			if (AllFiles[slot].data == nullptr)
+				return 0;
+
+			AllFiles[slot].dataSize = readSize;
+			if (Bfile_ReadFile_OS(handle, AllFiles[slot].data, readAmt, -1) != readAmt) {
+				free(AllFiles[slot].data);
+				AllFiles[slot].data = nullptr;
 				Bfile_CloseFile_OS(handle);
 				AllFiles[slot].Close();
 				return 0;
@@ -244,17 +257,25 @@ char *ti_Detect(void **curr_search_posistion, const char *detection_string) {
 			int detectLength = strlen(detection_string);
 			DebugAssert(detectLength < 32);
 
-			char readFile[32];
-			int handle = OpenVar(slotFile.path, READ, false);
-			DebugAssert(handle != -1);
+			int slot = FindSlot(slotFile.path);
 
-			if (Bfile_ReadFile_OS(handle, readFile, detectLength, sizeof(tifile)) != detectLength ||
-				memcmp(readFile, detection_string, detectLength)) {
+			if (slot == -1 || AllFiles[slot].data == nullptr) {
+				int handle = OpenVar(slotFile.path, READ, false);
+				char readFile[32];
+				DebugAssert(handle != -1);
 
-				bValid = false;
+				if (Bfile_ReadFile_OS(handle, readFile, detectLength, sizeof(tifile)) != detectLength ||
+					memcmp(readFile, detection_string, detectLength)) {
+
+					bValid = false;
+				}
+
+				Bfile_CloseFile_OS(handle);
+			} else {
+				if (memcmp(AllFiles[slot].data, detection_string, detectLength)) {
+					bValid = false;
+				}
 			}
-
-			Bfile_CloseFile_OS(handle);
 		}
 
 		if (bValid) {

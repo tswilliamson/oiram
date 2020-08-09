@@ -171,7 +171,7 @@ void extract_tiles(void) {
     gfx_sprite_t **tiles = tileset_tiles;
     
     ti_CloseAll();
-    slot = ti_Open("OiramT", "r");
+    slot = ti_Open("OiramT", "r", -1);
     if (!slot) {
         missing_appvars();
     }
@@ -247,7 +247,7 @@ void extract_sprites(void) {
     uint8_t slot;
     
     ti_CloseAll();
-    slot = ti_Open("OiramS", "r");
+    slot = ti_Open("OiramS", "r", -1);
     if (slot) {
         uint8_t *spr_ptr = ti_GetDataPtr(slot);
         

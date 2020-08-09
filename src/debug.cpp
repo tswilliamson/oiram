@@ -31,3 +31,10 @@ void failedAssert(const char* assertion) {
 
 #endif
 
+void debugCheck(const char* function, const int line) {
+	Bdisp_Fill_VRAM(0, 3);
+	reset_printf();
+	printf("%s %d", function, line);
+	int key = 0;
+	GetKey(&key);
+}
