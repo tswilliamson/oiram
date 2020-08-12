@@ -56,6 +56,9 @@ typedef uint8_t ti_var_t;
  */
 void ti_CloseAll(void);
 
+// Sets a preallocated region for the next memory mapped file open (Prizm port hack)
+void ti_FileSetAllocation(void* mem, uint32_t allocedSize);
+
 /**
  * Opens a file
  *

@@ -2277,7 +2277,7 @@ typedef enum {
 #define sk_Left             0x02
 #define sk_Right            0x03
 #define sk_Up               0x04
-#define sk_Enter            0x09
+#define sk_Enter            31
 #define sk_2nd              0x36
 #define sk_Clear            0x0F
 #define sk_Alpha            0x30

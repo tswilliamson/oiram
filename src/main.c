@@ -294,6 +294,10 @@ HANDLE_DRAW_LEVEL:
     // copy the oiram sprites to the temporary bufferes
     set_normal_oiram_sprites();
 
+	// Prizm port: put loaded level in stack space (32 kb should be enough)
+	uint8 levelStack[32768];
+	ti_FileSetAllocation(levelStack, 32768);
+
     // load all the enemies in the level
     set_level(pack->name, game.level);
     get_enemies();
@@ -487,6 +491,7 @@ HANDLE_PACK_FINISH:
         gfx_BlitBuffer();
         delay(22);
     } while (os_GetCSC() != sk_Enter);
+	while (os_GetCSC()) {}
 
     // debounce
     delay(200);

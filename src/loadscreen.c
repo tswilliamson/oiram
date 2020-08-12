@@ -388,7 +388,7 @@ void set_load_screen(void) {
     gfx_BlitBuffer();
 
     // debounce
-    while (kb_ScanGroup(EXIT_KEY_GROUP) & EXIT_KEY);
+	while (os_GetCSC()) {}
 
     for (;;) {
         kb_key_t grp7;
@@ -399,7 +399,9 @@ void set_load_screen(void) {
 		kb_Scan();
 
         // debounce
-        delay(20);
+		if (os_GetCSC()) {
+			while (os_GetCSC()) {}
+		}
 
         grp7 = kb_Data[7];
         grp6 = kb_Data[6];

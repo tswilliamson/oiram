@@ -56,6 +56,7 @@ struct CEFileSlot {
 	tifile file;
 	char path[32];
 	uint8_t* data;
+	bool managed;
 	int dataSize;
 	uint32 pos;
 
@@ -104,6 +105,14 @@ static int OpenVar(const char* name, int mode, bool bHasExtension = false) {
 	return Bfile_OpenFile_OS(shortName, mode, 0);
 }
 
+
+static void* currentAllocation = nullptr;
+uint32_t currentAllocationSize = 0;
+void ti_FileSetAllocation(void* mem, uint32_t allocedSize) {
+	currentAllocation = mem;
+	currentAllocationSize = allocedSize;
+}
+
 /**
  * Opens a file
  *
@@ -130,7 +139,10 @@ ti_var_t ti_Open(const char *name, const char *mode, int readSize) {
 			if (AllFiles[slot].dataSize == readSize)
 				return slot + 1;
 			else {
-				free(AllFiles[slot].data);
+				// free unless the allocation was set up by program
+				if (AllFiles[slot].managed) {
+					free(AllFiles[slot].data);
+				}
 				AllFiles[slot].data = nullptr;
 			}
 		}
@@ -146,7 +158,16 @@ ti_var_t ti_Open(const char *name, const char *mode, int readSize) {
 
 			const int var_length = AllFiles[slot].file.data.var_length;
 			const int readAmt = readSize == -1 ? var_length : min(readSize, var_length);
-			AllFiles[slot].data = (uint8_t*) malloc(readAmt);
+			if (currentAllocation) {
+				DebugAssert(currentAllocationSize >= readAmt);
+				AllFiles[slot].data = (uint8_t*) currentAllocation;
+				AllFiles[slot].managed = false;
+				currentAllocation = nullptr;
+			} else {
+				AllFiles[slot].data = (uint8_t*)malloc(readAmt);
+				AllFiles[slot].managed = true;
+			}
+
 			if (AllFiles[slot].data == nullptr)
 				return 0;
 
