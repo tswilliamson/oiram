@@ -189,10 +189,8 @@ void set_level(char *name, uint8_t level) {
         game.num_levels = *pack_data;
         pack_data++;
         if (level) {
-            uint16_t *level_data = (uint16_t*)pack_data;
-			uint16_t seekSize = level_data[level - 1];
-			EndianSwap16_Little(seekSize);
-            pack_data += seekSize;
+			uint8_t* level_data = pack_data + (level - 1) * 2;
+            pack_data += (level_data[0] | (level_data[1] << 8));
         }
         pack_data += (game.num_levels-1)*2;
 

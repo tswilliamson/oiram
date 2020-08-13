@@ -129,6 +129,9 @@ void ti_FileSetAllocation(void* mem, uint32_t allocedSize) {
  * @note If there isn't enough memory to create the variable, or a slot isn't open, zero (0) is returned
  */
 ti_var_t ti_Open(const char *name, const char *mode, int readSize) {
+	void* preferredAllocation = currentAllocation;
+	currentAllocation = nullptr;
+
 	int slot = FindSlot(name);
 	if (slot == -1)
 		return 0;
@@ -158,18 +161,19 @@ ti_var_t ti_Open(const char *name, const char *mode, int readSize) {
 
 			const int var_length = AllFiles[slot].file.data.var_length;
 			const int readAmt = readSize == -1 ? var_length : min(readSize, var_length);
-			if (currentAllocation) {
+			if (preferredAllocation) {
 				DebugAssert(currentAllocationSize >= readAmt);
-				AllFiles[slot].data = (uint8_t*) currentAllocation;
+				AllFiles[slot].data = (uint8_t*)preferredAllocation;
 				AllFiles[slot].managed = false;
-				currentAllocation = nullptr;
 			} else {
 				AllFiles[slot].data = (uint8_t*)malloc(readAmt);
 				AllFiles[slot].managed = true;
 			}
 
-			if (AllFiles[slot].data == nullptr)
+			if (AllFiles[slot].data == nullptr) {
+				Bfile_CloseFile_OS(handle);
 				return 0;
+			}
 
 			AllFiles[slot].dataSize = readSize;
 			if (Bfile_ReadFile_OS(handle, AllFiles[slot].data, readAmt, -1) != readAmt) {
