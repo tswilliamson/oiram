@@ -110,6 +110,18 @@ struct GraphX_Context {
 		outH = y2 - y;
 	}
 
+	void ClipRLESprite(gfx_rletsprite_t* sprite, int x, int y, int& outX0, int& outY0, int& outW, int& outH) {
+		int x1 = max(x, Clip_MinX);
+		int y1 = max(y, Clip_MinY);
+		int x2 = min(x + sprite->width, Clip_MaxX);
+		int y2 = min(y + sprite->height, Clip_MaxY);
+
+		outX0 = x1 - x;
+		outY0 = y1 - y;
+		outW = x2 - x;
+		outH = y2 - y;
+	}
+
 	uint16_t ResolvePalette(uint8_t PaletteIndex) {
 		return Palette[PaletteIndex];
 	}
@@ -191,6 +203,60 @@ void RenderSprite(gfx_sprite_t *sprite, int x, int y) {
 	}
 }
 
+template<bool bClip>
+void RenderRLESprite(gfx_rletsprite_t *sprite, int x, int y) {
+	CheckClip();
+
+	if (!sprite)
+		return;
+
+	int x0, y0, w, h;
+	if (bClip) {
+		GFX.ClipRLESprite(sprite, x, y, x0, y0, w, h);
+	} else {
+		x0 = 0; y0 = 0; w = sprite->width; h = sprite->height;
+	}
+
+	uint8_t* spriteData = sprite->data;
+	uint16_t* targetLine = GetTargetAddr(x, y+y0);
+
+	if (y0) {
+		for (int lines = 0; lines < y0; lines++) {
+			int curWidth = sprite->width;
+			bool bTransparent = true;
+			while (curWidth > 0) {
+				uint8 curRun = *(spriteData++);
+				if (!bTransparent) {
+					spriteData += curRun;
+				}
+				bTransparent = !bTransparent;
+				curWidth -= curRun;
+			}
+		}
+	}
+
+	for (; y0 < h; y0++) {
+		int curWidth = sprite->width;
+		int xPix = 0;
+		bool bTransparent = true;
+		while (curWidth > 0) {
+			uint8 curRun = *(spriteData++);
+			if (!bTransparent) {
+				for (uint8 pix = 0; pix < curRun; pix++, xPix++) {
+					if (!bClip || (xPix >= x0 && xPix <= w)) {
+						targetLine[xPix] = GFX.ResolvePalette(*(spriteData++));
+					}
+				}
+			} else {
+				xPix += curRun;
+			}
+			bTransparent = !bTransparent;
+			curWidth -= curRun;
+		}
+		targetLine += gfx_lcdWidth;
+	}
+}
+
 void gfx_Sprite(gfx_sprite_t *sprite, int x, int y) {
 	RenderSprite<true, false>(sprite, x, y);
 }
@@ -260,9 +326,19 @@ gfx_sprite_t *gfx_FlipSpriteY(gfx_sprite_t *sprite_in,
 void gfx_RLETSprite(gfx_rletsprite_t *sprite,
 	int x,
 	int y) {
+
 	CheckClip();
 
-	// todo
+	RenderRLESprite<true>(sprite, x, y);
+}
+
+void gfx_RLETSprite_NoClip(gfx_rletsprite_t *sprite,
+	uint24_t x,
+	uint8_t y) {
+
+	CheckClip();
+
+	RenderRLESprite<false>(sprite, x, y);
 }
 
 void gfx_SetPalette(void *palette,
@@ -599,6 +675,17 @@ void gfx_Tilemap(gfx_tilemap_t *tilemap,
 	if (tileYMod) {
 		baseY -= tileYMod;
 		numRows++;
+	}
+
+	// if we are rendering past the data, then render black
+	if (numRows + tileY > tilemap->height) {
+		unsigned int newRows = tilemap->height - tileY;
+		unsigned int removedRows = numRows - newRows;
+		numRows = newRows;
+		uint16_t SwapColor = GFX.CurColor;
+		GFX.CurColor = 0;
+		gfx_FillRectangle(baseX, baseY + tilemap->tile_height * numRows, numCols * tilemap->tile_width, tilemap->tile_height * removedRows);
+		GFX.CurColor = SwapColor;
 	}
 
 	int curY = baseY;
