@@ -59,10 +59,15 @@ struct CEFileSlot {
 	bool managed;
 	int dataSize;
 	uint32 pos;
+	int32 writeHandle;
 
-	CEFileSlot() : data(nullptr) {}
+	CEFileSlot() : data(nullptr), writeHandle(-1) {}
 
 	void Close() {
+		if (writeHandle >= 0) {
+			Bfile_CloseFile_OS(writeHandle);
+			writeHandle = -1;
+		}
 	}
 };
 
@@ -91,7 +96,7 @@ void ti_CloseAll() {
 	bAnyOpen = false;
 }
 
-static int OpenVar(const char* name, int mode, bool bHasExtension = false) {
+static void GetVarName(uint16_t* destName,const char* name, bool bHasExtension = false) {
 	char fullName[64];
 	strcpy(fullName, "\\\\fls0\\");
 	strcat(fullName, name);
@@ -99,9 +104,12 @@ static int OpenVar(const char* name, int mode, bool bHasExtension = false) {
 		strcat(fullName, ".8xv");
 	}
 
-	uint16_t shortName[64];
-	Bfile_StrToName_ncpy(shortName, fullName, 64);
+	Bfile_StrToName_ncpy(destName, fullName, 64);
+}
 
+static int OpenVar(const char* name, int mode, bool bHasExtension = false) {
+	uint16_t shortName[64];
+	GetVarName(shortName, name, bHasExtension);
 	return Bfile_OpenFile_OS(shortName, mode, 0);
 }
 
@@ -196,12 +204,73 @@ ti_var_t ti_Open(const char *name, const char *mode, int readSize) {
 		return 0;
 	}
 
+	if (!strcmp(mode, "w")) {
+		// Prizm files need to know their size
+		DebugAssert(readSize > 0);
+
+		// free any cached data, we'll use direct write calls for this one
+		if (AllFiles[slot].data) {
+			// free unless the allocation was set up by program
+			if (AllFiles[slot].managed) {
+				free(AllFiles[slot].data);
+			}
+			AllFiles[slot].data = nullptr;
+		}
+
+		// acct for TI file hader
+		unsigned int dataSize = readSize;
+		readSize += sizeof(tifile);
+
+		int handle = OpenVar(name, WRITE);
+		int fileSize = handle < 0 ? -1 : Bfile_GetFileSize_OS(handle);
+		if (fileSize != readSize) {
+			uint16_t fileName[64];
+			GetVarName(fileName, name);
+
+			// create a new one
+			if (handle >= 0) {
+				Bfile_CloseFile_OS(handle);
+				Bfile_DeleteEntry(fileName);
+			}
+
+			int result = Bfile_CreateEntry_OS(fileName, CREATEMODE_FILE, (size_t*) &readSize);
+			if (result != 0) {
+				return 0;
+			}
+
+			handle = OpenVar(name, WRITE);
+			if (handle < 0) {
+				return 0;
+			}
+		}
+
+		strcpy(AllFiles[slot].path, name);
+
+		tifile newFile;
+		newFile.file_length = readSize;
+		newFile.data.var_length = dataSize;
+		newFile.data.data_length = dataSize + 2;
+		newFile.data.data_length_2 = dataSize + 2;
+		newFile.data.header_length = (uint16_t)(offsetof(tivar, data_length_2) - offsetof(tivar, data_length));
+		memset(newFile.comment, 0, sizeof(newFile.comment));
+		memcpy((char*) newFile.data.name, name, 8);
+		newFile.DoEndianSwap();
+		memcpy(&AllFiles[slot].file, &newFile, sizeof(tifile));
+		Bfile_WriteFile_OS(handle, &AllFiles[slot].file, sizeof(tifile));
+
+		AllFiles[slot].writeHandle = handle;
+		bAnyOpen = true;
+
+		return slot + 1;
+	}
+
 	DebugAssert(0); // unsupported
 	return 0;
 }
 
 void *ti_GetDataPtr(const ti_var_t slot) {
-	return AllFiles[slot - 1].data;
+	CEFileSlot& fileSlot = AllFiles[slot - 1];
+	return &fileSlot.data[fileSlot.pos];
 }
 
 int ti_GetC(const ti_var_t slot) {
@@ -211,6 +280,31 @@ int ti_GetC(const ti_var_t slot) {
 	} else {
 		return EOF;
 	}
+}
+
+int ti_PutC(const char c, const ti_var_t slot) {
+	CEFileSlot& fileSlot = AllFiles[slot - 1];
+	int retOffset = Bfile_WriteFile_OS(fileSlot.writeHandle, &c, 1);
+
+	if (retOffset < 0)
+		return EOF;
+
+	return retOffset;
+}
+
+size_t ti_Write(const void *data, size_t size, size_t count, const ti_var_t slot) {
+	CEFileSlot& fileSlot = AllFiles[slot - 1];
+	int retOffset = Bfile_WriteFile_OS(fileSlot.writeHandle, data, size * count);
+
+	if (retOffset < 0)
+		return EOF;
+
+	return retOffset;
+}
+
+int ti_SetArchiveStatus(bool archived, const ti_var_t slot) {
+	// does nothing!
+	return 0;
 }
 
 int ti_Seek(int offset, unsigned int origin, const ti_var_t slot) {

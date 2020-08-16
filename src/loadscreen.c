@@ -50,19 +50,18 @@ uint8_t *get_pack_pointer(ti_var_t slot) {
 
 // this routine should only be used right before an exit
 void save_progress(void) {
-	// todo
-	DebugAssert(false);
-	/*
+
     ti_var_t variable;
     ti_CloseAll();
-    if ((variable = ti_Open(save_name, "w"))) {
+	int size = 2 + sizeof(pack_info_t) * num_packs;
+    if ((variable = ti_Open(save_name, "w", size))) {
         ti_PutC((char)num_packs, variable);
         ti_Write(&pack_info, sizeof(pack_info_t), num_packs, variable);
         ti_PutC((char)game.alternate_keypad, variable);
         ti_SetArchiveStatus(true, variable);
     }
     ti_CloseAll();
-	*/
+
     gfx_End();
 }
 
@@ -235,6 +234,13 @@ void set_level(char *name, uint8_t level) {
 #define MAX_SHOW 7
 
 void set_load_screen(void) {
+	// on prizm, save every time we enter this screen (except the first time)
+	static bool saveNow = false;
+	if (saveNow) {
+		save_progress();
+	}
+	saveNow = true;
+
     ti_var_t slot;
     int y;
 
@@ -395,6 +401,15 @@ void set_load_screen(void) {
 
         // scan the keypad
 		kb_Scan();
+		
+		// don't debounce exit
+        if (kb_Data[EXIT_KEY_GROUP] == EXIT_KEY) {
+#if TARGET_WINSIM
+			exit(0);
+#endif
+			kb_Scan_with_GetKey();
+			goto redraw_screen;
+        }
 
         // debounce
 		if (os_GetCSC()) {
@@ -405,11 +420,6 @@ void set_load_screen(void) {
         grp6 = kb_Data[6];
 		_grp1 = kb_Data[1];
 
-        if (kb_Data[EXIT_KEY_GROUP] == EXIT_KEY) {
-            save_progress();
-			kb_Scan_with_GetKey();
-			goto redraw_screen;
-        }
         if (grp6 == kb_Enter || _grp1 == kb_2nd) {
             break;
         }
