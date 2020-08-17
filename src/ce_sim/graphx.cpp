@@ -243,9 +243,10 @@ void RenderRLESprite(gfx_rletsprite_t *sprite, int x, int y) {
 			uint8 curRun = *(spriteData++);
 			if (!bTransparent) {
 				for (uint8 pix = 0; pix < curRun; pix++, xPix++) {
-					if (!bClip || (xPix >= x0 && xPix <= w)) {
-						targetLine[xPix] = GFX.ResolvePalette(*(spriteData++));
+					if (!bClip || (xPix >= x0 && xPix < w)) {
+						targetLine[xPix] = GFX.ResolvePalette(*spriteData);
 					}
+					spriteData++;
 				}
 			} else {
 				xPix += curRun;

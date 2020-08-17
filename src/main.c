@@ -37,11 +37,16 @@ bool easter_egg3;
 bool easter_egg4;
 
 void missing_appvars(void) {
-    gfx_End();
-    os_SetCursorPos(0, 0);
-    os_PutStrFull("Err: Missing Oiram AppVars");
-    while(!os_GetCSC());
-    exit(0);
+	uint16_t atColor[2] = { 0xFFFF, 0x0000 };
+	gfx_SetPalette(atColor, 2, 0);
+
+	while (true) {
+		gfx_FillScreen(1);
+		gfx_SetTextFGColor(0);
+		gfx_PrintStringXY("Missing OiramS.8xv and/or OiramT.8xv", 71, 101);
+		gfx_BlitBuffer();
+		kb_Scan_with_GetKey();
+	}
 }
 
 // this handles the timer
@@ -111,7 +116,7 @@ void handler_keypad(void) {
 
 		double_rectangle(80, 100, 160, 20);
 
-		gfx_SetTextFGColor(0);
+		gfx_SetTextFGColor(WHITE_INDEX);
 		const char* str1 = "PAUSE";
 		int width = gfx_GetStringWidth(str1);
 		gfx_PrintStringXY(str1, 160 - width / 2, 105);
