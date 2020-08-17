@@ -6,21 +6,23 @@
 
 #include "fxcg/system.h"
 
+extern "C" {
 #if !TARGET_WINSIM
-// returns true if the key is down, false if up
-bool keyDown_fast(unsigned char keyCode) {
-	static const unsigned short* keyboard_register = (unsigned short*)0xA44B0000;
+	// returns true if the key is down, false if up
+	bool keyDown_fast(unsigned char keyCode) {
+		static const unsigned short* keyboard_register = (unsigned short*)0xA44B0000;
 
-	int row, col, word, bit;
-	row = keyCode % 10;
-	col = keyCode / 10 - 1;
-	word = row >> 1;
-	bit = col + 8 * (row & 1);
-	return (keyboard_register[word] & (1 << bit));
-}
+		int row, col, word, bit;
+		row = keyCode % 10;
+		col = keyCode / 10 - 1;
+		word = row >> 1;
+		bit = col + 8 * (row & 1);
+		return (keyboard_register[word] & (1 << bit));
+	}
 #else
-extern bool keyDown_fast(unsigned char keyCode);
+	extern bool keyDown_fast(unsigned char keyCode);
 #endif
+};
 
 uint8_t kb_Data[8] = { 0 };
 

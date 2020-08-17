@@ -6,7 +6,9 @@
 
 #include "fxcg/system.h"
 
-extern bool keyDown_fast(unsigned char keyCode);
+extern "C" {
+	extern bool keyDown_fast(unsigned char keyCode);
+};
 
 static uint8_t findKey() {
 	for (int32 i = 27; i <= 79; i++) {

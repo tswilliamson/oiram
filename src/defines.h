@@ -106,7 +106,13 @@ typedef struct {
     uint8_t num_levels;
     uint8_t pack;
     uint24_t seconds;
-    bool alternate_keypad;
+	uint8_t jumpKey;
+	uint8_t runKey;
+	uint8_t attackKey;
+	uint8_t duckKey;
+	uint8_t leftKey;
+	uint8_t rightKey;
+	uint8_t pauseKey;
     uint8_t blue_item_count;
 } game_t;
 

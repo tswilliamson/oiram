@@ -53,11 +53,17 @@ void save_progress(void) {
 
     ti_var_t variable;
     ti_CloseAll();
-	int size = 2 + sizeof(pack_info_t) * num_packs;
+	int size = 8 + sizeof(pack_info_t) * num_packs;
     if ((variable = ti_Open(save_name, "w", size))) {
         ti_PutC((char)num_packs, variable);
         ti_Write(&pack_info, sizeof(pack_info_t), num_packs, variable);
-        ti_PutC((char)game.alternate_keypad, variable);
+		ti_PutC((char)game.jumpKey, variable);
+		ti_PutC((char)game.runKey, variable);
+		ti_PutC((char)game.attackKey, variable);
+		ti_PutC((char)game.duckKey, variable);
+		ti_PutC((char)game.leftKey, variable);
+		ti_PutC((char)game.rightKey, variable);
+		ti_PutC((char)game.pauseKey, variable);
         ti_SetArchiveStatus(true, variable);
     }
     ti_CloseAll();
@@ -78,11 +84,24 @@ void load_progress(void) {
     if ((variable = ti_Open(save_name, "r", -1))) {
         num_packs_in_var = (uint8_t)ti_GetC(variable);
         pack_info_in_var = ti_GetDataPtr(variable);
-        ti_Seek(-1, SEEK_END, variable);
-        game.alternate_keypad = (bool)ti_GetC(variable);
+        ti_Seek(-7, SEEK_END, variable);
+		game.jumpKey = ti_GetC(variable);
+		game.runKey = ti_GetC(variable);
+		game.attackKey = ti_GetC(variable);
+		game.duckKey = ti_GetC(variable);
+		game.leftKey = ti_GetC(variable);
+		game.rightKey = ti_GetC(variable);
+		game.pauseKey = ti_GetC(variable);
         ti_Rewind(variable);
     } else {
-        game.alternate_keypad = false;
+		// defaults: Jump = Shift, Run = Optn, Attack = Optn, Duck = Down
+		game.jumpKey = 78;
+		game.runKey = 68;
+		game.attackKey = 68;
+		game.duckKey = 37;
+		game.leftKey = 38;
+		game.rightKey = 27;
+		game.pauseKey = 39;
     }
 
     memset(pack_info, 0, sizeof pack_info);
@@ -231,6 +250,38 @@ void set_level(char *name, uint8_t level) {
     gfx_palette[BACKGROUND_COLOR_INDEX] = color;
 }
 
+bool GetMapKey(uint8_t* keyCode, const char* button) {
+	gfx_SetColor(0);
+	gfx_Rectangle(80, 80, 160, 60);
+	gfx_SetColor(8);
+	gfx_FillRectangle(81, 81, 158, 58);
+
+	gfx_SetTextFGColor(0);
+	const char* str1 = "PRESS KEY FOR";
+	const char* str2 = "[MENU] TO CANCEL";
+	int width = gfx_GetStringWidth(str1);
+	gfx_PrintStringXY(str1, 160 - width / 2, 90);
+	width = gfx_GetStringWidth(button);
+	gfx_PrintStringXY(button, 160 - width / 2, 105);
+	width = gfx_GetStringWidth(str2);
+	gfx_PrintStringXY(str2, 160 - width / 2, 120);
+
+	gfx_BlitBuffer();
+
+	uint8_t newKey;
+	do {
+		newKey = os_GetCSC();
+	} while (newKey == 0);
+	
+	while (os_GetCSC()) {}
+
+	if (newKey == 48)
+		return false;
+
+	*keyCode = newKey;
+	return true;
+}
+
 #define MAX_SHOW 7
 
 void set_load_screen(void) {
@@ -247,12 +298,6 @@ void set_load_screen(void) {
     uint8_t search_current;
     void *search_pos;
     const char *search_str;
-    const char *str_2nd = "[SHIFT]";
-    const char *str_up = "[UP]";
-    const char *str_alpha = "[ALPHA]";
-    const char *str_1;
-    const char *str_2;
-    const char *str_3;
 
     gfx_sprite_t *tile_208 = tileset_tiles[208];
     gfx_sprite_t *tile_145 = tileset_tiles[145];
@@ -313,27 +358,10 @@ void set_load_screen(void) {
     gfx_Rectangle(2, 100, 316, ((MAX_SHOW+1) * 10) + 1);
 
     gfx_TransparentSprite(mushroom, 5, selected_pack*10 + 103);
-
-//    gfx_PrintStringXY("Controls", 5, 187);
-
-    if (game.alternate_keypad) {
-        str_1 = str_2nd;
-        str_2 = str_up;
-        str_3 = str_alpha;
-    } else {
-        str_1 = str_alpha;
-        str_2 = str_2nd;
-        str_3 = str_up;
-    }
-
-    gfx_PrintStringXY(str_1, 9, 184);
-    gfx_PrintStringXY(str_2, 9, 196);
-    gfx_PrintStringXY(str_3, 9, 208);
-//    gfx_PrintStringXY("[del]", 9, 199);
- //   gfx_PrintStringXY("Quit", 65, 199);
-    gfx_PrintStringXY("Run", 65, 184);
-    gfx_PrintStringXY("Jump", 65, 196);
-    gfx_PrintStringXY("Special, pickup shells", 65, 208);
+	
+    gfx_PrintStringXY("[EXE] Start Game", 9, 184);
+    gfx_PrintStringXY("[OPTN] Change Keys", 9, 196);
+    gfx_PrintStringXY("[MENU] Quit", 9, 208);
 
     gfx_PrintStringXY("Press <> to select level", 150, 184);
 
@@ -401,7 +429,11 @@ void set_load_screen(void) {
 
         // scan the keypad
 		kb_Scan();
-		
+
+		grp7 = kb_Data[7];
+		grp6 = kb_Data[6];
+		_grp1 = kb_Data[1];
+
 		// don't debounce exit
         if (kb_Data[EXIT_KEY_GROUP] == EXIT_KEY) {
 #if TARGET_WINSIM
@@ -412,20 +444,29 @@ void set_load_screen(void) {
         }
 
         // debounce
-		if (os_GetCSC()) {
+		if (os_GetCSC() && (_grp1 || grp6 || grp7)) {
 			while (os_GetCSC()) {}
 		}
-
-        grp7 = kb_Data[7];
-        grp6 = kb_Data[6];
-		_grp1 = kb_Data[1];
 
         if (grp6 == kb_Enter || _grp1 == kb_2nd) {
             break;
         }
         if (_grp1 == kb_Mode) {
-            game.alternate_keypad = !game.alternate_keypad;
-			while (kb_ScanGroup(1) == kb_Mode) {}
+			uint8_t newRun, newJump, newAttack, newDuck, newLeft, newRight, newPause;
+			if (!GetMapKey(&newJump, "JUMP")) goto redraw_screen;
+			if (!GetMapKey(&newRun, "RUN")) goto redraw_screen;
+			if (!GetMapKey(&newAttack, "ATTACK")) goto redraw_screen;
+			if (!GetMapKey(&newDuck, "DUCK/PIPE")) goto redraw_screen;
+			if (!GetMapKey(&newLeft, "LEFT")) goto redraw_screen;
+			if (!GetMapKey(&newRight, "RIGHT")) goto redraw_screen;
+			if (!GetMapKey(&newPause, "PAUSE")) goto redraw_screen;
+			game.runKey = newRun;
+			game.jumpKey = newJump;
+			game.attackKey = newAttack;
+			game.duckKey = newDuck;
+			game.leftKey = newLeft;
+			game.rightKey = newRight;
+			game.pauseKey = newPause;
             goto redraw_screen;
         }
         if (grp7 == kb_Down || grp7 == kb_Up) {

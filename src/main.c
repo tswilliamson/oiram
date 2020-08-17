@@ -29,6 +29,8 @@ gfx_tilemap_t tilemap;
 oiram_t oiram;
 game_t game;
 
+void double_rectangle(uint24_t x, uint8_t y, uint24_t width, uint8_t height);
+
 bool easter_egg1;
 bool easter_egg2;
 bool easter_egg3;
@@ -62,74 +64,22 @@ void handler_timer(void) {
     draw_time();
 }
 
-// called when user presses or releases a key
-void handler_keypad_alternate(void) {
-    bool press_up, pressed_s;
-    kb_key_t g1_key, g2_key, g7_key;
-    static bool pressed_special = false;
-
-    kb_Scan();
-
-    // read keypad data
-    g1_key = kb_Data[1];
-    g2_key = kb_Data[2];
-    g7_key = kb_Data[7];
-
-    pressed_s       = (g2_key & kb_Alpha);
-    pressed_2nd     = (g1_key & kb_2nd);
-
-    pressed_down    = (g7_key & kb_Down);
-    pressed_left    = (g7_key & kb_Left);
-    pressed_right   = (g7_key & kb_Right);
-
-    press_up        = (g7_key & kb_Up);
-
-    if (allow_up_press) {
-        pressed_up = press_up;
-    } else if (!press_up) {
-        allow_up_press = true;
-        if (oiram.vy < -5) {
-            oiram.vy = -5;
-        }
-    }
-
-    if (pressed_s && !pressed_special) {
-        pressed_alpha = true;
-    } else {
-        pressed_alpha = false;
-    }
-    pressed_special = pressed_s;
-
-    if (kb_Data[EXIT_KEY_GROUP] & EXIT_KEY) {
-        if (!oiram.failed) {
-            game.exit = true;
-            game.fastexit = true;
-        }
-    }
-}
+extern bool keyDown_fast(unsigned char keyCode);
 
 // called when user presses or releases a key
 void handler_keypad(void) {
     bool press_up, pressed_s;
-    kb_key_t g1_key, g2_key, g7_key;
-    static bool pressed_special = false;
+	static bool pressed_special = false;
 
-    kb_Scan();
+    pressed_2nd     = keyDown_fast(game.runKey);
 
-    // read keypad data
-    g1_key = kb_Data[1];
-    g2_key = kb_Data[2];
-    g7_key = kb_Data[7];
+    pressed_down    = keyDown_fast(game.duckKey);
+    pressed_left    = keyDown_fast(game.leftKey);
+    pressed_right   = keyDown_fast(game.rightKey);
 
-    pressed_2nd     = (g2_key & kb_Alpha);
+    pressed_s       = keyDown_fast(game.attackKey);
 
-    pressed_down    = (g7_key & kb_Down);
-    pressed_left    = (g7_key & kb_Left);
-    pressed_right   = (g7_key & kb_Right);
-
-    pressed_s       = (g7_key & kb_Up);
-
-    press_up        = (g1_key & kb_2nd);
+    press_up        = keyDown_fast(game.jumpKey);
 
     if (allow_up_press) {
         pressed_up = press_up;
@@ -147,12 +97,29 @@ void handler_keypad(void) {
     }
     pressed_special = pressed_s;
 
-    if (kb_Data[EXIT_KEY_GROUP] & EXIT_KEY) {
+    if (keyDown_fast(48)) {
+		while (keyDown_fast(48)) {}
+
         if (!oiram.failed) {
             game.exit = true;
             game.fastexit = true;
         }
     }
+
+	if (keyDown_fast(game.pauseKey)) {
+		while (keyDown_fast(game.pauseKey)) {}
+
+		double_rectangle(80, 100, 160, 20);
+
+		gfx_SetTextFGColor(0);
+		const char* str1 = "PAUSE";
+		int width = gfx_GetStringWidth(str1);
+		gfx_PrintStringXY(str1, 160 - width / 2, 105);
+		gfx_BlitBuffer();
+
+		while (os_GetCSC() == 0) {}
+		while (os_GetCSC()) {}
+	}
 }
 
 static void (*handle_keypad)(void);
@@ -332,11 +299,7 @@ HANDLE_DRAW_LEVEL:
 	*/
 
     // setup keypad handlers
-    if (game.alternate_keypad) {
-        handle_keypad = handler_keypad_alternate;
-    } else {
-        handle_keypad = handler_keypad;
-    }
+    handle_keypad = handler_keypad;
 
     // reset animations
     tiles.animation_3_count = 0;
