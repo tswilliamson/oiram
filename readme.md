@@ -1,7 +1,7 @@
 # Oiram
 This is a Prizm port of Oiram. The port was written using the PrizmSDK and adapted from the original TI-84+ CE version. The original Oiram is a mario-style platformer programmed from scratch in C and assembly using the CE development toolchain.
 
-You can find the complete original readme [here](https://github.com/mateoconlechuga/oiram/blob/master/packs/readme.md).
+You can find the complete original readme [here](https://github.com/mateoconlechuga/oiram/blob/master/extra/readme.md).
 There's also a handy level editor [here](https://github.com/mateoconlechuga/oiram-editor/releases/latest).
 
 ![screenshot](img/prizm_screen.png)
@@ -10,7 +10,19 @@ There's also a handy level editor [here](https://github.com/mateoconlechuga/oira
 
 Download the latest release [here](https://github.com/tswilliamson/oiram/releases)
 
-Copy the Oiram.g3a, OiramS.8xv, OiramT.8xv, and OiramPK.8xv files to the file root of your Prizm calculator. 
+Copy the Oiram.g3a, OiramS.8xv, OiramT.8xv, and OiramPK.8xv files to the file root of your Prizm calculator. You should now find the Add-In installed on your calculator home screen.
+
+## Keys
+
+The default keys are:
+
+    [SHIFT] Jump
+    [OPTN] Run/Attack
+    [Arrow Keys] Move/Duck
+    [EXE] Pause
+    [MENU] Exit
+
+With the exception of MENU, these keys can be reconfigured by pressing OPTN in the level select screen.
 
 ## Compatibility
 
