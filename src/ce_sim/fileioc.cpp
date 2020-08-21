@@ -54,7 +54,7 @@ struct tifile {
 
 struct CEFileSlot {
 	tifile file;
-	char path[32];
+	char path[96];
 	uint8_t* data;
 	bool managed;
 	int dataSize;
@@ -71,7 +71,7 @@ struct CEFileSlot {
 	}
 };
 
-const int NumSlots = 64;
+const int NumSlots = 36;
 
 static bool bAnyOpen = false;
 static CEFileSlot AllFiles[NumSlots];
@@ -326,7 +326,7 @@ int ti_Rewind(const ti_var_t slot) {
 }
 
 struct foundFile {
-	char path[48];
+	char path[256];
 };
 
 typedef struct {
@@ -341,12 +341,12 @@ static void FindFiles(const char* path, foundFile* toArray, int& numFound, int m
 	int ret, handle;
 	file_type_t info; // See Bfile_FindFirst for the definition of this struct
 
-	Bfile_StrToName_ncpy(filter, path, 0x50); // Overkill
+	Bfile_StrToName_ncpy(filter, path, 0xFF); // Overkill
 
 	ret = Bfile_FindFirst((const char*)filter, &handle, (char*)found, &info);
 
 	while (ret == 0 && numFound < maxAllowed) {
-		Bfile_NameToStr_ncpy(toArray[numFound++].path, found, 48);
+		Bfile_NameToStr_ncpy(toArray[numFound++].path, found, 0xFF);
 		ret = Bfile_FindNext(handle, (char*)found, (char*)&info);
 	};
 
@@ -355,7 +355,7 @@ static void FindFiles(const char* path, foundFile* toArray, int& numFound, int m
 
 char *ti_Detect(void **curr_search_posistion, const char *detection_string) {
 	// todo : detection string
-	static foundFile files[64];
+	static foundFile files[32];
 	static int numFound = -1;
 
 	// only search once 
