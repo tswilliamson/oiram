@@ -105,6 +105,7 @@ typedef struct {
     uint8_t level;
     uint8_t num_levels;
     uint8_t pack;
+	char packVar[65];
     uint24_t seconds;
 	uint8_t jumpKey;
 	uint8_t runKey;

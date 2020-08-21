@@ -292,142 +292,142 @@ void set_load_screen(void) {
 	}
 	saveNow = true;
 
-    ti_var_t slot;
-    int y;
+	ti_var_t slot;
+	int y;
 
-    uint8_t search_current;
-    void *search_pos;
-    const char *search_str;
+	uint8_t search_current;
+	void *search_pos;
+	const char *search_str;
 
-    gfx_sprite_t *tile_208 = tileset_tiles[208];
-    gfx_sprite_t *tile_145 = tileset_tiles[145];
-    gfx_sprite_t *tile_194 = tileset_tiles[194];
-    gfx_sprite_t *tile_195 = tileset_tiles[195];
+	gfx_sprite_t *tile_208 = tileset_tiles[208];
+	gfx_sprite_t *tile_145 = tileset_tiles[145];
+	gfx_sprite_t *tile_194 = tileset_tiles[194];
+	gfx_sprite_t *tile_195 = tileset_tiles[195];
 
-    uint8_t *pack_data;
-    static uint8_t selected_pack = 0;
-    uint8_t selected_level = 0;
-    static uint8_t scroll_amt = 0;
-    uint8_t num_levels;
-    uint8_t max_select_level[MAX_SHOW];
-    uint8_t tmp;
+	uint8_t *pack_data;
+	static uint8_t selected_pack = 0;
+	uint8_t selected_level = 0;
+	static uint8_t scroll_amt = 0;
+	uint8_t num_levels;
+	uint8_t max_select_level[MAX_SHOW];
+	uint8_t tmp;
 
-    gfx_SetClipRegion(0, 0, LCD_WIDTH, LCD_HEIGHT);
+	gfx_SetClipRegion(0, 0, LCD_WIDTH, LCD_HEIGHT);
 
-    redraw_screen:
+redraw_screen:
 
-    gfx_SetTextBGColor(DARK_BLUE_INDEX);
-    gfx_SetTextTransparentColor(DARK_BLUE_INDEX);
+	gfx_SetTextBGColor(DARK_BLUE_INDEX);
+	gfx_SetTextTransparentColor(DARK_BLUE_INDEX);
 
-    y = 103;
-    slot = 0;
+	y = 103;
+	slot = 0;
 
-    gfx_palette[BACKGROUND_COLOR_INDEX] = 0xD77E;
-    gfx_FillScreen(BLACK_INDEX);
-    gfx_ScaledTransparentSprite_NoClip(oiram_logo, 150, 32, 2, 2);
+	gfx_palette[BACKGROUND_COLOR_INDEX] = 0xD77E;
+	gfx_FillScreen(BLACK_INDEX);
+	gfx_ScaledTransparentSprite_NoClip(oiram_logo, 150, 32, 2, 2);
 
-    gfx_TransparentSprite(tile_194, 24, 52);
-    gfx_TransparentSprite(tile_195, 40, 52);
+	gfx_TransparentSprite(tile_194, 24, 52);
+	gfx_TransparentSprite(tile_195, 40, 52);
 
-    gfx_TransparentSprite(tile_145, 40, 68);
+	gfx_TransparentSprite(tile_145, 40, 68);
 
-    gfx_TransparentSprite(tile_194, 56, 20);
-    gfx_TransparentSprite(tile_195, 72, 20);
-    gfx_TransparentSprite(tile_145, 72, 36);
-    gfx_TransparentSprite(tile_145, 72, 52);
-    gfx_TransparentSprite(tile_145, 72, 68);
-    gfx_TransparentSprite(tile_145, 72, 84);
-    gfx_TransparentSprite(tile_208, 56, 36);
-    gfx_TransparentSprite(tile_208, 56, 52);
-    gfx_TransparentSprite(tile_208, 56, 68);
+	gfx_TransparentSprite(tile_194, 56, 20);
+	gfx_TransparentSprite(tile_195, 72, 20);
+	gfx_TransparentSprite(tile_145, 72, 36);
+	gfx_TransparentSprite(tile_145, 72, 52);
+	gfx_TransparentSprite(tile_145, 72, 68);
+	gfx_TransparentSprite(tile_145, 72, 84);
+	gfx_TransparentSprite(tile_208, 56, 36);
+	gfx_TransparentSprite(tile_208, 56, 52);
+	gfx_TransparentSprite(tile_208, 56, 68);
 
-    gfx_TransparentSprite(tile_208, 24, 68);
-    gfx_TransparentSprite(tile_208, 24, 84);
+	gfx_TransparentSprite(tile_208, 24, 68);
+	gfx_TransparentSprite(tile_208, 24, 84);
 
-    gfx_TransparentSprite(tileset_tiles[222], 56, 84);
-    gfx_TransparentSprite(tileset_tiles[223], 40, 84);
+	gfx_TransparentSprite(tileset_tiles[222], 56, 84);
+	gfx_TransparentSprite(tileset_tiles[223], 40, 84);
 
 	gfx_SetTextFGColor(12);
 	gfx_PrintStringXY("Prizm port by TSW", 150, 70);
 
-    gfx_SetTextFGColor(WHITE_INDEX);
-    gfx_PrintStringXY("By Mateo", 150, 58);
-    gfx_SetColor(DARK_BLUE_INDEX);
-    gfx_FillRectangle(2, 100, 316, 80);
-    gfx_SetColor(WHITE_INDEX);
-    gfx_Rectangle(2, 100, 316, ((MAX_SHOW+1) * 10) + 1);
+	gfx_SetTextFGColor(WHITE_INDEX);
+	gfx_PrintStringXY("By Mateo", 150, 58);
+	gfx_SetColor(DARK_BLUE_INDEX);
+	gfx_FillRectangle(2, 100, 316, 80);
+	gfx_SetColor(WHITE_INDEX);
+	gfx_Rectangle(2, 100, 316, ((MAX_SHOW + 1) * 10) + 1);
 
-    gfx_TransparentSprite(mushroom, 5, selected_pack*10 + 103);
-	
-    gfx_PrintStringXY("[EXE] Start Game", 9, 184);
-    gfx_PrintStringXY("[OPTN] Change Keys", 9, 196);
-    gfx_PrintStringXY("[MENU] Quit", 9, 208);
+	gfx_TransparentSprite(mushroom, 5, selected_pack * 10 + 103);
 
-    gfx_PrintStringXY("Press <> to select level", 150, 184);
+	gfx_PrintStringXY("[EXE] Start Game", 9, 184);
+	gfx_PrintStringXY("[OPTN] Change Keys", 9, 196);
+	gfx_PrintStringXY("[MENU] Quit", 9, 208);
 
-    tmp = 0;
-    num_packs = 0;
-    search_str = search_string0;
-    search_current = 1;
-    do {
-        ti_CloseAll();
-        search_pos = NULL;
-        while((var_name = ti_Detect(&search_pos, search_str))) {
-            if (scroll_amt <= num_packs && y < (103 + 10*MAX_SHOW)) {
-                uint8_t max_select;
-                uint8_t progress;
+	gfx_PrintStringXY("Press <> to select level", 150, 184);
 
-                slot = ti_Open((char*)var_name, "r", 128);
-                pack_data = get_pack_pointer(slot);
+	tmp = 0;
+	num_packs = 0;
+	search_str = search_string0;
+	search_current = 1;
+	do {
+		ti_CloseAll();
+		search_pos = NULL;
+		while ((var_name = ti_Detect(&search_pos, search_str))) {
+			if (scroll_amt <= num_packs && y < (103 + 10 * MAX_SHOW)) {
+				uint8_t max_select;
+				uint8_t progress;
 
-                gfx_PrintStringXY((char*)pack_data, 23, y + 4);
+				slot = ti_Open((char*)var_name, "r", 128);
+				pack_data = get_pack_pointer(slot);
 
-                pack_data += strlen((char*)pack_data) + 1;
-                pack_data += strlen((char*)pack_data) + 1;
-                num_levels = *pack_data;
-                max_select = progress = pack_info[num_packs].progress;
+				gfx_PrintStringXY((char*)pack_data, 23, y + 4);
 
-                if (progress != num_levels) {
-                    max_select++;
-                }
+				pack_data += strlen((char*)pack_data) + 1;
+				pack_data += strlen((char*)pack_data) + 1;
+				num_levels = *pack_data;
+				max_select = progress = pack_info[num_packs].progress;
 
-                gfx_SetTextXY(320 - 8*3 - 3, y + 4);
-                gfx_SetMonospaceFont(8);
-                gfx_PrintUInt(max_select, 3);
-                gfx_SetMonospaceFont(0);
+				if (progress != num_levels) {
+					max_select++;
+				}
 
-                max_select_level[num_packs - scroll_amt] = max_select - 1;
+				gfx_SetTextXY(320 - 8 * 3 - 3, y + 4);
+				gfx_SetMonospaceFont(8);
+				gfx_PrintUInt(max_select, 3);
+				gfx_SetMonospaceFont(0);
 
-                if (selected_pack == tmp) {
-                    selected_level = max_select - 1;
-                }
-                y += 10;
-                tmp++;
+				max_select_level[num_packs - scroll_amt] = max_select - 1;
 
-                ti_CloseAll();
-            }
+				if (selected_pack == tmp) {
+					selected_level = max_select - 1;
+				}
+				y += 10;
+				tmp++;
 
-            num_packs++;
-        }
-        search_str = search_string1;
-    } while (search_current--);
+				ti_CloseAll();
+			}
 
-    if (selected_pack > num_packs) {
-        selected_pack = 0;
-        scroll_amt = 0;
-    }
+			num_packs++;
+		}
+		search_str = search_string1;
+	} while (search_current--);
 
-    gfx_BlitBuffer();
+	if (selected_pack > num_packs) {
+		selected_pack = 0;
+		scroll_amt = 0;
+	}
 
-    // debounce
+	gfx_BlitBuffer();
+
+	// debounce
 	while (os_GetCSC()) {}
 
-    for (;;) {
-        kb_key_t grp7;
-        kb_key_t _grp1;
-        kb_key_t grp6;
+	for (;;) {
+		kb_key_t grp7;
+		kb_key_t _grp1;
+		kb_key_t grp6;
 
-        // scan the keypad
+		// scan the keypad
 		kb_Scan();
 
 		grp7 = kb_Data[7];
@@ -435,23 +435,23 @@ void set_load_screen(void) {
 		_grp1 = kb_Data[1];
 
 		// don't debounce exit
-        if (kb_Data[EXIT_KEY_GROUP] == EXIT_KEY) {
+		if (kb_Data[EXIT_KEY_GROUP] == EXIT_KEY) {
 #if TARGET_WINSIM
 			exit(0);
 #endif
 			kb_Scan_with_GetKey();
 			goto redraw_screen;
-        }
+		}
 
-        // debounce
+		// debounce
 		if (os_GetCSC() && (_grp1 || grp6 || grp7)) {
 			while (os_GetCSC()) {}
 		}
 
-        if (grp6 == kb_Enter || _grp1 == kb_2nd) {
-            break;
-        }
-        if (_grp1 == kb_Mode) {
+		if (grp6 == kb_Enter || _grp1 == kb_2nd) {
+			break;
+		}
+		if (_grp1 == kb_Mode) {
 			uint8_t newRun, newJump, newAttack, newDuck, newLeft, newRight, newPause;
 			if (!GetMapKey(&newJump, "JUMP")) goto redraw_screen;
 			if (!GetMapKey(&newRun, "RUN")) goto redraw_screen;
@@ -467,44 +467,63 @@ void set_load_screen(void) {
 			game.leftKey = newLeft;
 			game.rightKey = newRight;
 			game.pauseKey = newPause;
-            goto redraw_screen;
-        }
-        if (grp7 == kb_Down || grp7 == kb_Up) {
-            if (grp7 == kb_Down && ((selected_pack + scroll_amt + 1) < num_packs)) {
-                if (selected_pack == MAX_SHOW-1) {
-                    scroll_amt++;
-                } else {
-                    selected_pack++;
-                }
-            }
-            if (grp7 == kb_Up && ((selected_pack + scroll_amt) != 0)) {
-                if (selected_pack == 0) {
-                    scroll_amt--;
-                } else {
-                    selected_pack--;
-                }
-            }
-            goto redraw_screen;
-        }
-        if (grp7 == kb_Left || grp7 == kb_Right) {
-            if (grp7 == kb_Left) {
-                if (selected_level) {
-                    selected_level--;
-                }
-            } else {
-                if (selected_level != max_select_level[selected_pack]) {
-                    selected_level++;
-                }
-            }
-            gfx_SetTextBGColor(DARK_BLUE_INDEX);
-            gfx_SetTextTransparentColor(BLACK_INDEX);
-            gfx_SetTextXY(320 - 8*3 - 3, selected_pack*10 + 103 + 4);
-            gfx_SetMonospaceFont(8);
-            gfx_PrintUInt(selected_level + 1, 3);
-            gfx_SetMonospaceFont(0);
-            gfx_BlitBuffer();
-        }
-    }
+			goto redraw_screen;
+		}
+		if (grp7 == kb_Down || grp7 == kb_Up) {
+			if (grp7 == kb_Down && ((selected_pack + scroll_amt + 1) < num_packs)) {
+				if (selected_pack == MAX_SHOW - 1) {
+					scroll_amt++;
+				} else {
+					selected_pack++;
+				}
+			}
+			if (grp7 == kb_Up && ((selected_pack + scroll_amt) != 0)) {
+				if (selected_pack == 0) {
+					scroll_amt--;
+				} else {
+					selected_pack--;
+				}
+			}
+			goto redraw_screen;
+		}
+		if (grp7 == kb_Left || grp7 == kb_Right) {
+			if (grp7 == kb_Left) {
+				if (selected_level) {
+					selected_level--;
+				}
+			} else {
+				if (selected_level != max_select_level[selected_pack]) {
+					selected_level++;
+				}
+			}
+			gfx_SetTextBGColor(DARK_BLUE_INDEX);
+			gfx_SetTextTransparentColor(BLACK_INDEX);
+			gfx_SetTextXY(320 - 8 * 3 - 3, selected_pack * 10 + 103 + 4);
+			gfx_SetMonospaceFont(8);
+			gfx_PrintUInt(selected_level + 1, 3);
+			gfx_SetMonospaceFont(0);
+			gfx_BlitBuffer();
+		}
+	}
+
+
+	// get the pack level name
+	search_str = search_string0;
+	search_current = 1;
+	int packNum = selected_pack + scroll_amt;
+	do {
+		ti_CloseAll();
+		search_pos = NULL;
+		while ((var_name = ti_Detect(&search_pos, search_str))) {
+			if (packNum == 0) {
+				strcpy(game.packVar, var_name);
+				break;
+			}
+			packNum--;
+		}
+
+		search_str = search_string1;
+	} while (search_current-- && packNum >= 0);
 
     game.pack = selected_pack + scroll_amt;
     game.level = selected_level;

@@ -43,10 +43,10 @@ bool in_viewport(int x, int y) {
     if (x + 360 <= t_x) {
         return false;
     }
-    if (y - 160 >= t_y) {
+    if (y - 224 >= t_y) {
         return false;
     } else
-    if (y + 160 <= t_y) {
+    if (y + 224 <= t_y) {
         return false;
     }
     return true;

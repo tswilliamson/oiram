@@ -271,7 +271,7 @@ HANDLE_DRAW_LEVEL:
 	ti_FileSetAllocation(levelStack, 32768);
 
     // load all the enemies in the level
-    set_level(pack->name, game.level);
+    set_level(game.packVar, game.level);
     get_enemies();
     oiram_start_location();
 
