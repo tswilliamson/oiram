@@ -511,19 +511,21 @@ redraw_screen:
 	search_str = search_string0;
 	search_current = 1;
 	int packNum = selected_pack + scroll_amt;
+	bool bFoundPack = false;
 	do {
 		ti_CloseAll();
 		search_pos = NULL;
 		while ((var_name = ti_Detect(&search_pos, search_str))) {
 			if (packNum == 0) {
 				strcpy(game.packVar, var_name);
+				bFoundPack = true;
 				break;
 			}
 			packNum--;
 		}
 
 		search_str = search_string1;
-	} while (search_current-- && packNum >= 0);
+	} while (search_current-- && bFoundPack == false);
 
     game.pack = selected_pack + scroll_amt;
     game.level = selected_level;
